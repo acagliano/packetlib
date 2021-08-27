@@ -186,7 +186,7 @@ size_t pl_ReadPacket(uint8_t *dest, size_t read_size){
 		}
 		else
 			if(srl_funcs.read_to_size(sizeof(packet_size), dest)) packet_size = *(size_t*)dest;
-	} while((start_time - timer_GetSafe(3, TIMER_UP)) > srl_read_timeout);
+	} while((timer_GetSafe(3, TIMER_UP) - start_time) > srl_read_timeout);
 	return 0;
 }
 
