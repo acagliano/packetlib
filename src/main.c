@@ -9,8 +9,6 @@
 #include <usbdrvce.h>
 #include <srldrvce.h>
 
-#include <exposure.h>
-
 
 srl_device_t srl;
 uint8_t *srl_buf = NULL;
