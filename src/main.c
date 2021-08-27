@@ -170,20 +170,18 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 size_t pl_ReadPacket(uint8_t *dest, size_t read_size, bool blocking){
 	static size_t packet_size = 0;
 	bool got_packet = false;
-	if(srl_funcs.process) srl_funcs.process();
-	if(!device_connected) return 0;
-	while(!got_packet){
+	do {
+		if(srl_funcs.process) srl_funcs.process();
+		if(!device_connected) return 0;
 		if(packet_size){
 			if(srl_funcs.read_to_size(packet_size, dest)) {
 				packet_size = 0;
 				return read_size;
-				break;
 			}
 		}
 		else
 			if(srl_funcs.read_to_size(sizeof(packet_size), dest)) packet_size = *(size_t*)dest;
-		if(!blocking) break;
-	}
+	} while(blocking);
 	return 0;
 }
 
