@@ -148,7 +148,7 @@ size_t pl_PreparePacket(uint8_t ctl, ps_seg_t *ps, uint8_t arr_len, uint8_t *pac
 }
 
 bool pl_SetReadTimeout(size_t ms_delay){
-	
+	srl_read_timeout = ms_delay;
 }
 
 #define MIN(x, y)	(x < y) ? x : y;
@@ -171,16 +171,10 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 	}
 }
 
-size_t pl_ReadPacket(uint8_t *dest, size_t read_size, bool blocking){
+size_t pl_ReadPacket(uint8_t *dest, size_t read_size){
 	static size_t packet_size = 0;
 	bool got_packet = false;
-	uint32_t timer_old;
-	if(srl_read_timeout){
-		timer_old = timer_GetSafe(1, TIMER_UP);
-		timer_Disable(1);
-		timer_Set(1, 0);
-		timer_Enable(1, TIMER_32K, TIMER_0INT, TIMER_UP);
-	}
+	uint32_t start_time = timer_GetSafe(3, TIMER_UP);
 	do {
 		if(srl_funcs.process) srl_funcs.process();
 		if(!device_connected) return 0;
@@ -192,13 +186,7 @@ size_t pl_ReadPacket(uint8_t *dest, size_t read_size, bool blocking){
 		}
 		else
 			if(srl_funcs.read_to_size(sizeof(packet_size), dest)) packet_size = *(size_t*)dest;
-		if(srl_read_timeout)
-			if((timer_GetSafe(1, TIMER_UP) / 32.768) > srl_read_timeout) break;
-	} while(blocking);
-	if(srl_read_timeout){
-		timer_Disable(1);
-		timer_Set(1, timer_old);
-	}
+	} while((start_time - timer_GetSafe(3, TIMER_UP)) > srl_read_timeout);
 	return 0;
 }
 
