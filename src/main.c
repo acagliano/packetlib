@@ -28,6 +28,11 @@ size_t srl_dbuf_size;
 size_t srl_bytes_read = 0;
 size_t srl_read_timeout = 0;
 
+
+bool cemu_check(void);
+size_t cemu_get(void *buf, size_t size);
+void cemu_send(void *buf, size_t size);
+
 /* USB/SRL Subsystem */
 bool usb_read_to_size(size_t size, uint8_t *out) {
     srl_bytes_read += srl_Read(&srl, &out[srl_bytes_read], size - srl_bytes_read);
@@ -135,15 +140,15 @@ bool pl_InitSubsystem(uint8_t srl_mode, size_t srl_buf_size, void* (*malloc)(siz
 }
 
 typedef struct _packet_segments {
-	uint8_t *addr,
-	size_t len
+	uint8_t *addr;
+	size_t len;
 } ps_seg_t;
 size_t pl_PreparePacket(uint8_t ctl, ps_seg_t *ps, uint8_t arr_len, uint8_t *packet){
 	size_t pos = 1;
 	packet[0] = ctl;
 	for(uint8_t i=0; i<arr_len; i++){
-		uint8_t* addr = ps[i]->addr;
-		size_t len = ps[i]->len;
+		uint8_t* addr = ps[i].addr;
+		size_t len = ps[i].len;
 		//if((pos + len) > buf_seg_size) return pos;
 		memcpy(&packet[pos], addr, len);
 		pos += len;
@@ -154,7 +159,7 @@ bool pl_SetReadTimeout(size_t ms_delay){
 	srl_read_timeout = ms_delay;
 }
 
-#define MIN(x, y)	(x < y) ? x : y;
+#define MIN(x, y)	((x) < (y)) ? (x) : (y)
 bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 	if(data==NULL) return false;
 	if(len==0) return false;
@@ -165,7 +170,8 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 		return true;
 	}
 	else {
-		for(size_t i = 0, uint8_t j=0; i < len; i+=(srl_dbuf_size-2), j++){
+		uint8_t j = 0;
+		for(size_t i = 0; i < len; i+=(srl_dbuf_size-2), j++){
 			srl_funcs.write(&ctl, sizeof(uint8_t));
 			srl_funcs.write(&j, sizeof(uint8_t));
 			srl_funcs.write(&data[i], MIN(srl_dbuf_size, len - i));
