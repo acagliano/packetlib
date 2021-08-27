@@ -1,11 +1,15 @@
 
+#include <tice.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <debug.h>
 #include <tice.h>
+#include <string.h>
 #include <usbdrvce.h>
 #include <srldrvce.h>
+
+#include <exposure.h>
 
 
 srl_device_t srl;
@@ -67,10 +71,7 @@ bool pipe_read_to_size(size_t size, uint8_t* out) {
         srl_bytes_read += recd;
     }
 
-    if(srl_bytes_read > size) {
-        dbg_sprintf(dbgerr, "Pipe buffer in illegal state\n");
-    }
-
+    if(srl_bytes_read > size) return false;
     if(srl_bytes_read == size) {
         srl_bytes_read = 0;
         return true;
@@ -105,36 +106,33 @@ static usb_error_t handle_usb_event(usb_event_t event, void *event_data,
     return USB_SUCCESS;
 }
 
-enum _srl_modes {
-	SRL_MODE_SERIAL,
-	SRL_MODE_CEMU
+enum net_mode_id {
+    MODE_SERIAL,
+    MODE_CEMU_PIPE
 };
-bool pl_InitSubsystem(uint8_t srl_mode, size_t srl_buf_size, void* (*malloc)(size_t)){
+bool pl_InitSubsystem(uint8_t srl_mode, uint8_t *buf, size_t srl_buf_size){
+	if(buf==NULL) return 0;
 	if(srl_buf_size==0) return false;
 	switch(srl_mode){
-		case SRL_MODE_SERIAL:
-			srl_funcs = {
-				MODE_SERIAL,
-				init_usb,
-				usb_process,
-				usb_read_to_size,
-				usb_write
-			};
+		case MODE_SERIAL:
+			srl_funcs.id = MODE_SERIAL;
+			srl_funcs.init = init_usb;
+			srl_funcs.process = usb_process;
+			srl_funcs.read_to_size = usb_read_to_size;
+			srl_funcs.write = usb_write;
 			break;
 		
-		case SRL_MODE_CEMU:
-			srl_funcs = {
-				MODE_CEMU_PIPE,
-				pipe_init,
-				NULL,
-				pipe_read_to_size,
-				cemu_send		// asm routine
-			};
+		case MODE_CEMU_PIPE:
+			srl_funcs.id = MODE_CEMU_PIPE;
+			srl_funcs.init = pipe_init;
+			srl_funcs.process = NULL;
+			srl_funcs.read_to_size = pipe_read_to_size;
+			srl_funcs.write = cemu_send;
 			break;
 		default:
 			return false;
 	}
-	if(!(srl_buf = malloc(srl_buf_size))) return false;
+	srl_buf = buf;
 	srl_dbuf_size = (srl_buf_size>>1);
 	return srl_funcs.init();
 }
@@ -143,7 +141,7 @@ typedef struct _packet_segments {
 	uint8_t *addr;
 	size_t len;
 } ps_seg_t;
-size_t pl_PreparePacket(uint8_t ctl, ps_seg_t *ps, uint8_t arr_len, uint8_t *packet){
+void pl_PreparePacket(uint8_t ctl, ps_seg_t *ps, uint8_t arr_len, uint8_t *packet){
 	size_t pos = 1;
 	packet[0] = ctl;
 	for(uint8_t i=0; i<arr_len; i++){
@@ -155,7 +153,7 @@ size_t pl_PreparePacket(uint8_t ctl, ps_seg_t *ps, uint8_t arr_len, uint8_t *pac
 	}
 }
 
-bool pl_SetReadTimeout(size_t ms_delay){
+void pl_SetReadTimeout(size_t ms_delay){
 	srl_read_timeout = ms_delay;
 }
 
@@ -182,7 +180,6 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 
 size_t pl_ReadPacket(uint8_t *dest, size_t read_size){
 	static size_t packet_size = 0;
-	bool got_packet = false;
 	uint32_t start_time = timer_GetSafe(3, TIMER_UP);
 	do {
 		if(srl_funcs.process) srl_funcs.process();
@@ -197,9 +194,4 @@ size_t pl_ReadPacket(uint8_t *dest, size_t read_size){
 			if(srl_funcs.read_to_size(sizeof(packet_size), dest)) packet_size = *(size_t*)dest;
 	} while((timer_GetSafe(3, TIMER_UP) - start_time) > srl_read_timeout);
 	return 0;
-}
-
-bool pl_Shutdown(void){
-	free(srl_buf);
-	return true;
 }
