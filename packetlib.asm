@@ -34,7 +34,7 @@ _usb_read_to_size:
 	push	hl
 	push	iy
 	push	de
-	call	_srl_Read
+	call	srl_Read
 	push	hl
 	pop	de
 	pop	hl
@@ -72,16 +72,16 @@ _usb_write:
 	push	de
 	push	hl
 	push	bc
-	call	_srl_Write
+	call	srl_Write
 	ld	sp, ix
 	pop	ix
 	ret
 
 _usb_process:
-	jp	_usb_HandleEvents
+	jp	usb_HandleEvents
 	
 _init_usb:
-	call	_srl_GetCDCStandardDescriptors
+	call	srl_GetCDCStandardDescriptors
 	ld	de, 12
 	push	de
 	push	hl
@@ -89,7 +89,7 @@ _init_usb:
 	push	hl
 	ld	hl, _handle_usb_event
 	push	hl
-	call	_usb_Init
+	call	usb_Init
 	pop	de
 	pop	de
 	pop	de
@@ -120,7 +120,7 @@ _handle_usb_event:
 	or	a, a
 	sbc	hl, bc
 	jq	nz, BB4_4
-	call	_usb_GetRole
+	call	usb_GetRole
 	ld	de, 0
 	ld	a, l
 	bit	4, a
@@ -143,7 +143,7 @@ BB4_5:
 	ld	hl, (ix + 9)
 	push	hl
 	push	de
-	call	_srl_Init
+	call	srl_Init
 	ld	de, 0
 	pop	hl
 	pop	hl
@@ -156,7 +156,7 @@ BB4_5:
 	push	hl
 	ld	hl, _srl
 	push	hl
-	call	_srl_SetRate
+	call	srl_SetRate
 	pop	hl
 	pop	hl
 	ld	hl, 1
@@ -164,7 +164,7 @@ BB4_5:
 	pea	ix + -1
 	ld	hl, _srl
 	push	hl
-	call	_srl_Read
+	call	srl_Read
 	ld	de, 0
 	pop	hl
 	pop	hl
@@ -325,9 +325,9 @@ BB7_8:
 	ld	(_srl_buf), de
 	ld	c, 1
 	ld	hl, (ix + 12)
-	call	__ishru
+	call	ti._ishru
 	ld	(_srl_dbuf_size), hl
-	call	__indcall
+	call	ti._indcall
 	ld	b, a
 BB7_10:
 	ld	a, b
@@ -368,7 +368,7 @@ BB8_1:
 	push	hl
 	ld	(ix + -9), iy
 	ld	(ix + -12), bc
-	call	_memcpy
+	call	ti._memcpy
 	ld	bc, (ix + -12)
 	ld	iy, (ix + -9)
 	pop	hl
