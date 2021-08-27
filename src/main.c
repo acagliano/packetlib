@@ -101,7 +101,7 @@ enum _srl_modes {
 	SRL_MODE_CEMU
 };
 bool pl_InitSubsystem(uint8_t srl_mode, size_t srl_buf_size, void* (*malloc)(size_t)){
-	if((srl_mode>SRL_MODE_CEMU) || (srl_mode<SRL_MODE_SERIAL)) return false;
+	if(srl_buf_size==0) return false;
 	switch(srl_mode){
 		case SRL_MODE_SERIAL:
 			srl_funcs = {
@@ -158,8 +158,8 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 	}
 	else {
 		for(size_t i = 0, uint8_t j=0; i < len; i+=(srl_dbuf_size-2), j++){
-			srl_funcs->write(ctl, sizeof(uint8_t));
-			srl_funcs->write(j, sizeof(uint8_t));
+			srl_funcs->write(&ctl, sizeof(uint8_t));
+			srl_funcs->write(&j, sizeof(uint8_t));
 			srl_funcs->write(data, MIN(srl_dbuf_size, len - i));
 		}
 	}
