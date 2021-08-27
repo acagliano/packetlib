@@ -338,50 +338,69 @@ BB7_10:
 pl_PreparePacket:
 	ld	hl, -12
 	call	ti._frameset
-	ld	a, (ix + 6)
-	ld	iy, (ix + 9)
-	ld	hl, (ix + 15)
-	ld	de, 1
-	ld	(ix + -3), de
-	ld	(hl), a
-	ld	bc, 0
+	ld	de, (ix + 9)
+	push	de
+	pop	iy
 	ld	a, (ix + 12)
-	ld	c, a
-BB8_1:
-	push	bc
-	pop	hl
+	ld	bc, 0
+	or	a, a
+	sbc	hl, hl
+	ld	l, a
+BB9_1:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB8_2
-	ld	hl, (iy)
+	jq	z, BB9_2
 	ld	(ix + -9), hl
+	ld	de, (iy)
 	ld	hl, (iy + 3)
-	ld	(ix + -6), hl
-	ld	hl, (ix + 15)
-	ld	de, (ix + -3)
-	add	hl, de
-	ld	de, (ix + -6)
-	push	de
-	ld	de, (ix + -9)
+	ld	(ix + -3), hl
+	ld	(ix + -6), iy
+	ld	iy, (ix + 18)
+	lea	hl, iy + 6
+	ld	(ix + -12), bc
+	add	hl, bc
+	ld	bc, (ix + -3)
+	push	bc
 	push	de
 	push	hl
-	ld	(ix + -9), iy
-	ld	(ix + -12), bc
 	call	ti._memcpy
-	ld	bc, (ix + -12)
-	ld	iy, (ix + -9)
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	hl, (ix + -6)
-	ld	de, (ix + -3)
-	add	hl, de
-	dec	bc
+	ld	hl, (ix + -9)
+	ld	bc, (ix + -6)
+	pop	de
+	pop	de
+	pop	de
+	ld	iy, (ix + -3)
+	ld	de, (ix + -12)
+	add	iy, de
+	lea	de, iy + 0
+	dec	hl
+	push	bc
+	pop	iy
 	lea	iy, iy + 6
-	ld	(ix + -3), hl
-	jq	BB8_1
-BB8_2:
+	push	de
+	pop	bc
+	jq	BB9_1
+BB9_2:
+	ld	de, 3
+	push	bc
+	pop	hl
+	add	hl, de
+	ex	de, hl
+	ld	a, (ix + 6)
+	ld	iy, (ix + 18)
+	ld	(iy + 3), a
+	ld	hl, (ix + 18)
+	ld	(hl), de
+	ld	bc, (_srl_dbuf_size)
+	ex	de, hl
+	call	ti._idivu
+	ld	a, l
+	inc	a
+	ld	iy, (ix + 18)
+	ld	(iy + 4), a
+	ld	a, (ix + 15)
+	ld	(iy + 5), a
 	ld	sp, ix
 	pop	ix
 	ret
@@ -396,124 +415,53 @@ pl_SetReadTimeout:
 
 
 pl_SendPacket:
-	ld	hl, -8
+	ld	hl, -6
 	call	ti._frameset
-	ld	c, (ix + 6)
-	ld	hl, (ix + 9)
-	ld	de, (ix + 12)
+	ld	hl, (ix + 6)
 	xor	a, a
-	ld	(ix + -1), c
-	ld	(ix + -4), de
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB10_1
-	jq	BB10_9
-BB10_1:
-	ex	de, hl
-	add	hl, bc
-	or	a, a
-	sbc	hl, bc
-	jq	z, BB10_9
+	jq	z, BB10_6
+	ld	hl, (hl)
 	ld	de, 3
-	ld	hl, (_srl_funcs+10)
-	push	de
-	pea	ix + -4
-	call	ti._indcallhl
-	pop	hl
-	pop	hl
-	ld	de, (ix + -4)
-	push	de
-	pop	bc
-	inc	bc
-	ld	hl, (_srl_dbuf_size)
-	or	a, a
-	sbc	hl, bc
-	jq	nc, BB10_3
-	ld	a, 1
-	ld	iy, 0
-	ld	bc, 1
-	ld	l, 0
-BB10_5:
-	ld	(ix + -5), l
-	lea	hl, iy + 0
+	ld	(ix + -6), hl
 	or	a, a
 	sbc	hl, de
-	jq	nc, BB10_10
-	ld	hl, (_srl_funcs+10)
-	push	bc
-	pea	ix + -1
-	ld	(ix + -8), iy
-	call	ti._indcallhl
-	pop	hl
-	pop	hl
-	ld	hl, (_srl_funcs+10)
-	ld	de, 1
-	push	de
-	pea	ix + -5
-	call	ti._indcallhl
-	pop	hl
-	pop	hl
-	ld	bc, (ix + -8)
-	ld	iy, (ix + 9)
-	add	iy, bc
-	ld	de, (_srl_dbuf_size)
-	ld	hl, (ix + -4)
-	or	a, a
-	sbc	hl, bc
-	push	hl
-	pop	bc
-	push	de
-	pop	hl
-	or	a, a
-	sbc	hl, bc
-	jq	c, BB10_8
-	push	bc
-	pop	de
-BB10_8:
-	ld	hl, (_srl_funcs+10)
-	push	de
-	push	iy
-	call	ti._indcallhl
-	pop	hl
-	pop	hl
-	ld	de, (_srl_dbuf_size)
-	ld	iy, (ix + -8)
-	ld	bc, -2
-	add	iy, bc
-	add	iy, de
-	ld	l, (ix + -5)
-	inc	l
-	ld	de, (ix + -4)
-	ld	a, 1
-	ld	bc, 1
-	jq	BB10_5
-BB10_3:
-	ld	hl, (_srl_funcs+10)
-	ld	de, 0
-	ld	a, (ix + 6)
-	ld	e, a
-	ld	bc, 1
-	push	bc
-	push	de
-	call	ti._indcallhl
-	pop	hl
-	pop	hl
-	ld	hl, (_srl_funcs+10)
-	ld	de, (ix + -4)
-	push	de
-	ld	de, (ix + 9)
-	push	de
-	call	ti._indcallhl
-	pop	hl
-	pop	hl
-	ld	a, 1
-	jq	BB10_9
-BB10_10:
-BB10_9:
+	jq	nc, BB10_2
+BB10_6:
 	ld	sp, ix
 	pop	ix
 	ret
+BB10_2:
+BB10_3:
+	ld	de, (_srl_dbuf_size)
+	push	de
+	pop	hl
+	ld	bc, (ix + -6)
+	or	a, a
+	sbc	hl, bc
+	jq	c, BB10_5
+	ld	de, (ix + -6)
+BB10_5:
+	ld	(ix + -3), de
+	ld	hl, (_srl_funcs+10)
+	ld	de, 3
+	push	de
+	pea	ix + -3
+	call	ti._indcallhl
+	pop	hl
+	pop	hl
+	ld	hl, (_srl_funcs+10)
+	ld	de, (ix + -3)
+	push	de
+	ld	de, (ix + 6)
+	push	de
+	call	ti._indcallhl
+	pop	hl
+	pop	hl
+	jq	BB10_3
+	
 	
 pl_ReadPacket:
 	ld	hl, -4
