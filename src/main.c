@@ -151,6 +151,7 @@ size_t pl_PreparePacket(uint8_t ctl, ps_seg_t *ps, uint8_t arr_len, uint8_t *pac
 bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 	if(data==NULL) return false;
 	if(len==0) return false;
+	srl_funcs.write(&len, sizeof(size_t));
 	if((len+1) <= srl_dbuf_size){
 		srl_funcs.write(ctl, sizeof(uint8_t));
 		srl_funcs.write(data, len);
@@ -160,7 +161,7 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 		for(size_t i = 0, uint8_t j=0; i < len; i+=(srl_dbuf_size-2), j++){
 			srl_funcs.write(&ctl, sizeof(uint8_t));
 			srl_funcs.write(&j, sizeof(uint8_t));
-			srl_funcs.write(data, MIN(srl_dbuf_size, len - i));
+			srl_funcs.write(&data[i], MIN(srl_dbuf_size, len - i));
 		}
 		return true;
 	}
