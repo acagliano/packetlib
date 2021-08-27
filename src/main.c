@@ -162,6 +162,7 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 			srl_funcs->write(&j, sizeof(uint8_t));
 			srl_funcs->write(data, MIN(srl_dbuf_size, len - i));
 		}
+		return true;
 	}
 }
 
