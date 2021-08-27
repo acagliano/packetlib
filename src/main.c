@@ -69,7 +69,7 @@ bool pipe_read_to_size(size_t size, uint8_t* out) {
     }
 
     if(srl_bytes_read == size) {
-        net_buf_size = 0;
+        srl_bytes_read = 0;
         return true;
     }
 
