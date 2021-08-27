@@ -149,10 +149,9 @@ size_t pl_PreparePacket(uint8_t ctl, ps_seg_t *ps, uint8_t arr_len, uint8_t *pac
 
 #define MIN(x, y)	(x < y) ? x : y;
 bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
-	bool multi = ((len + 1) > srl_dbuf_size);
 	if(data==NULL) return false;
 	if(len==0) return false;
-	if((len+1) < srl_dbuf_size){
+	if((len+1) <= srl_dbuf_size){
 		srl_funcs->write(ctl, sizeof(uint8_t));
 		srl_funcs->write(data, len);
 		return true;
@@ -163,7 +162,7 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 			srl_funcs->write(j, sizeof(uint8_t));
 			srl_funcs->write(data, MIN(srl_dbuf_size, len - i));
 		}
-	}	
+	}
 }
 
 size_t pl_ReadPacket(uint8_t *dest, size_t read_size, bool blocking){
