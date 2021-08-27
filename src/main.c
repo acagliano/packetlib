@@ -1,6 +1,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
+#include <debug.h>
 #include <tice.h>
 #include <usbdrvce.h>
 #include <srldrvce.h>
