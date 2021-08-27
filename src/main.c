@@ -152,15 +152,15 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 	if(data==NULL) return false;
 	if(len==0) return false;
 	if((len+1) <= srl_dbuf_size){
-		srl_funcs->write(ctl, sizeof(uint8_t));
-		srl_funcs->write(data, len);
+		srl_funcs.write(ctl, sizeof(uint8_t));
+		srl_funcs.write(data, len);
 		return true;
 	}
 	else {
 		for(size_t i = 0, uint8_t j=0; i < len; i+=(srl_dbuf_size-2), j++){
-			srl_funcs->write(&ctl, sizeof(uint8_t));
-			srl_funcs->write(&j, sizeof(uint8_t));
-			srl_funcs->write(data, MIN(srl_dbuf_size, len - i));
+			srl_funcs.write(&ctl, sizeof(uint8_t));
+			srl_funcs.write(&j, sizeof(uint8_t));
+			srl_funcs.write(data, MIN(srl_dbuf_size, len - i));
 		}
 		return true;
 	}
@@ -169,18 +169,18 @@ bool pl_SendPacket(const uint8_t ctl, const uint8_t *data, size_t len){
 size_t pl_ReadPacket(uint8_t *dest, size_t read_size, bool blocking){
 	static size_t packet_size = 0;
 	bool got_packet = false;
-	if(srl_config->process) mode->process();
+	if(srl_funcs.process) srl_funcs.process();
 	if(!device_connected) return 0;
 	while(!got_packet){
 		if(packet_size){
-			if(srl_config->read_to_size(packet_size, dest)) {
+			if(srl_funcs.read_to_size(packet_size, dest)) {
 				packet_size = 0;
 				return read_size;
 				break;
 			}
 		}
 		else
-			if(srl_config->read_to_size(sizeof(packet_size), dest)) packet_size = *(size_t*)dest;
+			if(srl_funcs.read_to_size(sizeof(packet_size), dest)) packet_size = *(size_t*)dest;
 		if(!blocking) break;
 	}
 	return 0;
