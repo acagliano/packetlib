@@ -412,89 +412,79 @@ pl_SetReadTimeout:
 pl_JoinPacketSegments:
 	ld	hl, -12
 	call	ti._frameset
-	ld	de, (ix + 6)
-	push	de
-	pop	iy
-	ld	a, (ix + 9)
+	ld	a, (ix + 6)
+	ld	iy, (ix + 9)
+	ld	hl, (ix + 15)
+	ld	de, 1
+	ld	(ix + -3), de
+	ld	(hl), a
 	ld	bc, 0
-	or	a, a
-	sbc	hl, hl
-	ld	l, a
+	ld	a, (ix + 12)
+	ld	c, a
 .lbl_1:
+	push	bc
+	pop	hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
 	jq	z, .lbl_2
-	ld	(ix + -9), hl
 	ld	hl, (iy)
-	ld	(ix + -6), hl
+	ld	(ix + -9), hl
 	ld	hl, (iy + 3)
-	ld	(ix + -3), hl
-	ld	hl, (ix + 12)
-	add	hl, bc
+	ld	(ix + -6), hl
+	ld	hl, (ix + 15)
 	ld	de, (ix + -3)
-	push	de
+	add	hl, de
 	ld	de, (ix + -6)
 	push	de
+	ld	de, (ix + -9)
+	push	de
 	push	hl
-	ld	(ix + -6), iy
+	ld	(ix + -9), iy
 	ld	(ix + -12), bc
 	call	ti._memcpy
-	ld	hl, (ix + -9)
-	ld	bc, (ix + -6)
-	pop	de
-	pop	de
-	pop	de
-	ld	iy, (ix + -3)
-	ld	de, (ix + -12)
-	add	iy, de
-	lea	de, iy + 0
-	dec	hl
-	push	bc
-	pop	iy
+	ld	bc, (ix + -12)
+	ld	iy, (ix + -9)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix + -6)
+	ld	de, (ix + -3)
+	add	hl, de
+	dec	bc
 	lea	iy, iy + 6
-	push	de
-	pop	bc
+	ld	(ix + -3), hl
 	jq	.lbl_1
 .lbl_2:
-	push	bc
-	pop	hl
+	ld	hl, (ix + -3)
 	ld	sp, ix
 	pop	ix
 	ret
 	
 	
 pl_SendPacket:
-	ld	hl, -5
+	ld	hl, -3
 	call	ti._frameset
-	ld	e, (ix + 6)
-	ld	hl, (ix + 12)
-	ld	a, (ix + 15)
+	ld	hl, (ix + 9)
 	ld	bc, -3
-	ld	(ix + -1), e
-	ld	(ix + -2), a
+	ld	de, 0
 	ld	iy, (_srl_dbuf_size)
 	add	iy, bc
 	push	hl
 	pop	bc
-	ld	de, 2
-	add	hl, de
-	ex	de, hl
 	lea	hl, iy + 0
 	or	a, a
-	sbc	hl, de
+	sbc	hl, bc
 	jq	c, .lbl_2
-	push	de
+	push	bc
 	pop	iy
 .lbl_2:
-	ld	(ix + -5), iy
-	ld	hl, (ix + 9)
+	ld	(ix + -3), iy
+	ld	hl, (ix + 6)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
 	jq	nz, .lbl_3
-	or	a, a
-	sbc	hl, hl
 	jq	.lbl_7
 .lbl_3:
 	push	bc
@@ -502,37 +492,20 @@ pl_SendPacket:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	ld	hl, 0
 	jq	z, .lbl_7
 	ld	de, 3
 	ld	hl, (_srl_funcs+10)
 	push	de
-	pea	ix + -5
+	pea	ix + -3
 	call	_indcallhl
 	pop	hl
 	pop	hl
 	ld	hl, (_srl_funcs+10)
-	ld	de, 1
+	ld	de, (ix + -3)
 	push	de
-	pea	ix + -1
-	call	_indcallhl
-	pop	hl
-	pop	hl
-	ld	hl, (_srl_funcs+10)
-	ld	de, 1
+	ld	de, (ix + 6)
 	push	de
-	pea	ix + -2
 	call	_indcallhl
-	pop	hl
-	pop	hl
-	ld	iy, (_srl_funcs+10)
-	ld	hl, (ix + -5)
-	ld	de, -2
-	add	hl, de
-	push	hl
-	ld	hl, (ix + 9)
-	push	hl
-	call	_indcall
 	pop	hl
 	pop	hl
 	ld	hl, (_srl_funcs+4)
@@ -542,10 +515,9 @@ pl_SendPacket:
 	jq	z, .lbl_6
 	call	_indcallhl
 .lbl_6:
-	ld	hl, (ix + -5)
-	ld	de, -2
-	add	hl, de
+	ld	de, (ix + -3)
 .lbl_7:
+	ex	de, hl
 	ld	sp, ix
 	pop	ix
 	ret
