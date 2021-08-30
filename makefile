@@ -39,8 +39,6 @@ endif
 #hashlib build rules
 all: hashlib
 
-hashlib: bin/HASHLIB.8xv
-
 bin/HASHLIB.8xv: src/hashlib.asm src/asm/sha256.asm
 	$(call MKDIR,$(@D))
 	fasmg src/hashlib.asm bin/HASHLIB.8xv
