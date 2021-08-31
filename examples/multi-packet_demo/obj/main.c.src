@@ -15,36 +15,46 @@ _main:
 	pop	hl
 	pop	hl
 	or	a, a
-	jq	nz, BB0_2
+	jq	nz, BB0_1
 	ld	hl, 1
 	jq	BB0_6
-BB0_2:
+BB0_1:
 	push	de
-	ld	(ix + -6), de
+	ld	(ix + -3), de
 	call	_ti_GetDataPtr
 	ld	(ix + -9), hl
 	pop	hl
-	ld	hl, (ix + -6)
+	ld	hl, (ix + -3)
 	push	hl
 	call	_ti_GetSize
-	pop	de
+	ld	(ix + -6), l
+	ld	(ix + -5), h
+	pop	hl
 	ld	de, 0
-	ld	e, l
-	ld	d, h
-	ld	(ix + -3), de
 	ld	hl, 5000
 	push	hl
 	ld	hl, 4096
 	push	hl
 	ld	hl, _srl_buf
 	push	hl
-	ld	hl, 1
-	push	hl
+	push	de
 	call	_pl_InitSubsystem
 	pop	hl
 	pop	hl
 	pop	hl
 	pop	hl
+	ld	l, 1
+	xor	a, l
+	bit	0, a
+	ld	hl, 1
+	jq	nz, BB0_6
+	or	a, a
+	sbc	hl, hl
+	ld	e, (ix + -6)
+	ld	d, (ix + -5)
+	ld	l, e
+	ld	h, d
+	ld	(ix + -6), hl
 	ld	hl, 5000
 	push	hl
 	call	_pl_SetReadTimeout
@@ -56,13 +66,13 @@ BB0_2:
 BB0_3:
 	push	bc
 	pop	hl
-	ld	de, (ix + -3)
+	ld	de, (ix + -6)
 	or	a, a
 	sbc	hl, de
 	jq	nc, BB0_4
 	ld	iy, (ix + -9)
 	add	iy, bc
-	ld	hl, (ix + -3)
+	ld	hl, (ix + -6)
 	or	a, a
 	sbc	hl, bc
 	ld	de, 0
@@ -82,7 +92,7 @@ BB0_3:
 	pop	bc
 	jq	BB0_3
 BB0_4:
-	ld	hl, (ix + -6)
+	ld	hl, (ix + -3)
 	push	hl
 	call	_ti_Close
 	pop	hl

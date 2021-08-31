@@ -22,6 +22,15 @@ enum _subsys_modes {
     NET_MODE_CEMU_PIPE
 };
 
+typedef enum {
+	PL_SUBSYS_NONE,
+	PL_SUBSYS_UP,
+	PL_SUBSYS_READY,
+	PL_SERIAL_CONNECTED,
+	PL_SUBSYS_INTERNAL_ERROR,
+	PL_SUBSYS_USER_ERROR = 0xff
+} subsys_status_t;
+
 /*
 	Structure denoting the address and length of a packet segment
 	Meant to be passed in array to pl_PreparePacket()
@@ -30,6 +39,10 @@ typedef struct _ps {
 	uint8_t *addr;
 	size_t len;
 } ps_t;
+
+typedef struct _subsys_config {
+	uint8_t* buf; size_t buf_size;
+} subsys_config_t;
 
 
 /*
@@ -45,7 +58,7 @@ typedef struct _ps {
 	True if able to successfully initialize the usb and serial devices
 	False if an error occured
 */
-bool pl_InitSubsystem(uint8_t subsys, uint8_t *buf, size_t buf_size, size_t ms_delay);
+bool pl_InitSubsystem(uint8_t srl_mode, subsys_config_t *sys_conf, size_t ms_delay);
 
 
 /*
@@ -102,5 +115,7 @@ void pl_SetReadTimeout(size_t ms_delay);
  */
 size_t pl_ReadPacket(uint8_t *dest, size_t read_size);
 
+subsys_status_t pl_GetDeviceStatus(void);
+void pl_Shutdown(void);
 
 #endif

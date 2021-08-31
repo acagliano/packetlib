@@ -3,53 +3,67 @@
 	section	.text,"ax",@progbits
 	public	_main
 _main:
-	ld	hl, -6
+	ld	hl, -15
 	call	__frameset
+	lea	hl, ix + -12
+	ld	(ix + -15), hl
 	ld	hl, (_strbuf)
 	ld	(ix + -6), hl
 	push	hl
 	call	_strlen
 	pop	de
 	ld	(ix + -3), hl
+	ld	hl, 6
+	push	hl
+	ld	hl, L___const.main.cfg
+	push	hl
+	ld	hl, (ix + -15)
+	push	hl
+	call	_memcpy
+	pop	hl
+	pop	hl
+	pop	hl
 	ld	hl, 5000
 	push	hl
-	ld	hl, 4096
+	ld	hl, (ix + -15)
 	push	hl
-	ld	hl, _srl_buf
-	push	hl
-	ld	hl, 1
+	or	a, a
+	sbc	hl, hl
 	push	hl
 	call	_pl_InitSubsystem
 	pop	hl
 	pop	hl
 	pop	hl
-	pop	hl
-	ld	hl, 5000
-	push	hl
-	call	_pl_SetReadTimeout
-	pop	hl
-	ld	hl, _packet_buf
+	call	_pl_GetDeviceStatus
+	ld	de, 3
+	or	a, a
+	sbc	hl, de
+	jq	nz, BB0_1
+	call	_os_GetKey
+	ld	hl, _packet
 	push	hl
 	ld	hl, 1
 	push	hl
 	pea	ix + -6
+	push	hl
 	call	_pl_JoinPacketSegments
 	pop	de
 	pop	de
 	pop	de
-	ld	de, 0
-	push	de
+	pop	de
 	push	hl
-	ld	hl, _packet_buf
+	ld	hl, _packet
 	push	hl
-	push	de
 	call	_pl_SendPacket
 	pop	hl
 	pop	hl
-	pop	hl
-	pop	hl
+	call	_pl_Shutdown
 	or	a, a
 	sbc	hl, hl
+	jq	BB0_3
+BB0_1:
+	ld	hl, 1
+BB0_3:
 	ld	sp, ix
 	pop	ix
 	ret
@@ -66,21 +80,30 @@ _strbuf:
 	dl	L_.str
 
 	section	.bss,"aw",@nobits
-	public	_packet_buf
-_packet_buf:
-	rb	4096
-
-	section	.bss,"aw",@nobits
 	public	_srl_buf
 _srl_buf:
-	rb	4096
+	rb	1024
+
+	section	.rodata,"a",@progbits
+	private	L___const.main.cfg
+L___const.main.cfg:
+	dl	_srl_buf
+	dl	1024
+
+	section	.bss,"aw",@nobits
+	public	_packet
+_packet:
+	rb	1024
 
 	ident	"clang version 12.0.0 (https://github.com/jacobly0/llvm-project 170be88120e3aa88c20eea5615ba76b8f1d6c647)"
 	extern	__Unwind_SjLj_Register
-	extern	__Unwind_SjLj_Unregister
+	extern	_pl_GetDeviceStatus
 	extern	__frameset
+	extern	__Unwind_SjLj_Unregister
 	extern	_pl_JoinPacketSegments
-	extern	_pl_SetReadTimeout
 	extern	_pl_SendPacket
 	extern	_pl_InitSubsystem
+	extern	_memcpy
+	extern	_os_GetKey
 	extern	_strlen
+	extern	_pl_Shutdown

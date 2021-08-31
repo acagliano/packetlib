@@ -35,7 +35,8 @@ int main(void)
 	pk_addr = ti_GetDataPtr(f);
 	pk_len = ti_GetSize(f);
 	
-	pl_InitSubsystem(NET_MODE_CEMU_PIPE, srl_buf, SRL_BUF_SIZE, 5000);
+	if(!pl_InitSubsystem(NET_MODE_SERIAL, srl_buf, SRL_BUF_SIZE, 5000))
+		return 1;
 	pl_SetReadTimeout(5000);
 	
 	for(size_t l = 0; l < pk_len;)
