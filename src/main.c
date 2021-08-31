@@ -37,7 +37,8 @@ size_t srl_dbuf_size = 0;
 size_t srl_bytes_read = 0;
 size_t srl_read_timeout = 0;
 
-#define TIMER32K_TO_MS	32.768
+#define CEMU_CONSOLE ((char*)0xFB0000)
+#define TIMERCPU_TO_MS		48000
 
 static usb_error_t handle_usb_event(usb_event_t event, void *event_data,
                                     usb_callback_data_t *callback_data);
@@ -101,9 +102,12 @@ void usb_process(void) {
 
 bool init_usb(void) {
 	char dummy;
+	strcpy(CEMU_CONSOLE, "usb attempt");
     usb_error_t usb_error = usb_Init(handle_usb_event, NULL, NULL, USB_DEFAULT_INIT_FLAGS);
-    if(usb_error) return false;
+    if(usb_error){ usb_Cleanup(); return false; }
+    usb_ResetDevice(usb_device);
     device_status = PL_SUBSYS_ENABLED;
+    strcpy(CEMU_CONSOLE, "srl attempt");
     srl_error_t srl_error = srl_Open(&srl_device, usb_device, srl_buf, srl_buf_size, SRL_INTERFACE_ANY, 115200);
     if(srl_error) return false;
     srl_Read(&srl_device, &dummy, 1);
@@ -137,6 +141,7 @@ bool pl_InitSubsystem(uint8_t srl_mode, subsys_config_t *sys_conf, size_t ms_del
 	if(sys_conf==NULL) return 0;
 	if(device_status) return 0;
 	uint32_t start_time;
+	ms_delay *= TIMERCPU_TO_MS;
 	switch(srl_mode){
 		case MODE_SERIAL:
 		case MODE_CEMU_PIPE:
@@ -149,10 +154,10 @@ bool pl_InitSubsystem(uint8_t srl_mode, subsys_config_t *sys_conf, size_t ms_del
 		default:
 			return false;
 	}
-	start_time = timer_GetSafe(3, TIMER_UP);
+	start_time = usb_GetCycleCounter();
 	do {
 		if(srl_funcs->init()) return true;
-	} while((timer_GetSafe(3, TIMER_UP) - start_time) < (ms_delay * TIMER32K_TO_MS));
+	} while((usb_GetCycleCounter() - start_time) < ms_delay);
 	return false;
 }
 
@@ -161,7 +166,7 @@ subsys_status_t pl_GetDeviceStatus(void){
 }
 
 void pl_SetReadTimeout(size_t ms_delay){
-	srl_read_timeout = (ms_delay * TIMER32K_TO_MS);
+	srl_read_timeout = (ms_delay * TIMERCPU_TO_MS);
 }
 
 typedef struct _packet_segments {
@@ -199,10 +204,11 @@ size_t pl_SendPacket(uint8_t *data, size_t len){
 
 size_t pl_ReadPacket(uint8_t *dest, size_t read_size){
 	static size_t packet_size = 0;
-	uint32_t start_time = timer_GetSafe(3, TIMER_UP);
+	uint32_t start_time;
 	if(device_status != PL_SUBSYS_READY) return 0;
 	if(dest == NULL) return 0;
 	if(read_size == 0) return 0;
+	start_time = usb_GetCycleCounter();
 	do {
 		if(srl_funcs->process) srl_funcs->process();
 		if(packet_size){
@@ -213,7 +219,7 @@ size_t pl_ReadPacket(uint8_t *dest, size_t read_size){
 		}
 		else
 			if(srl_funcs->read_to_size(sizeof(packet_size), dest)) packet_size = *(size_t*)dest;
-	} while((timer_GetSafe(3, TIMER_UP) - start_time) < srl_read_timeout);
+	} while((usb_GetCycleCounter() - start_time) < srl_read_timeout);
 	return 0;
 }
 
