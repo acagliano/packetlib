@@ -16,9 +16,8 @@ enum net_mode_id {
 
 typedef enum {
 	PL_SUBSYS_NONE,
-	PL_SUBSYS_UP,
+	PL_SUBSYS_ENABLED,
 	PL_SUBSYS_READY,
-	PL_SERIAL_CONNECTED,
 	PL_SUBSYS_INTERNAL_ERROR,
 	PL_SUBSYS_USER_ERROR = 0xff
 } subsys_status_t;
@@ -81,27 +80,7 @@ srl_callbacks_t pipe_callbacks = {
 static usb_error_t handle_usb_event(usb_event_t event, void *event_data,
                                     usb_callback_data_t *callback_data __attribute__((unused))) {
     /* Enable newly connected devices */
-    if(event == USB_DEVICE_CONNECTED_EVENT && !(usb_GetRole() & USB_ROLE_DEVICE)) {
-		usb_device = event_data;
-        device_status = PL_SUBSYS_UP;
-        usb_ResetDevice(usb_device);
-    }
-    if(event == USB_HOST_CONFIGURE_EVENT) {
-        usb_device_t host = usb_FindDevice(NULL, NULL, USB_SKIP_HUBS);
-        if(host) usb_device = host;
-        device_status = PL_SUBSYS_READY;
-    }
-    /* When a device is connected, or when connected to a computer */
-    if((event == USB_DEVICE_ENABLED_EVENT && !(usb_GetRole() & USB_ROLE_DEVICE))) {
-        usb_device = event_data;
-        device_status = PL_SUBSYS_READY;
-    }
-    if(event == USB_DEVICE_DISCONNECTED_EVENT) {
-        srl_Close(&srl_device);
-        device_status = PL_SUBSYS_NONE;
-        usb_device = NULL;
-    }
-
+    
     return USB_SUCCESS;
 }
 
@@ -121,19 +100,20 @@ void usb_process(void) {
 }
 
 bool init_usb(void) {
-    usb_error_t usb_error = usb_Init(handle_usb_event, NULL, srl_GetCDCStandardDescriptors(), USB_DEFAULT_INIT_FLAGS);
+	char dummy;
+    usb_error_t usb_error = usb_Init(handle_usb_event, NULL, NULL, USB_DEFAULT_INIT_FLAGS);
     if(usb_error) return false;
-    char dummy;
+    device_status = PL_SUBSYS_ENABLED;
     srl_error_t srl_error = srl_Open(&srl_device, usb_device, srl_buf, srl_buf_size, SRL_INTERFACE_ANY, 115200);
     if(srl_error) return false;
     srl_Read(&srl_device, &dummy, 1);
-    device_status = PL_SERIAL_CONNECTED;
+    device_status = PL_SUBSYS_READY;
     return true;
 }
 
 /* Pipe Subsystem */
 bool pipe_init(void) {
-    device_status = PL_SERIAL_CONNECTED;
+    device_status = PL_SUBSYS_READY;
     return true;
 }
 
@@ -208,7 +188,7 @@ size_t pl_SendPacket(uint8_t *data, size_t len){
 	size_t packetlen = MIN(srl_dbuf_size-3, len);
 	if(data==NULL) return 0;
 	if(len==0) return 0;
-	
+	if(device_status != PL_SUBSYS_READY) return 0;
 	srl_funcs->write(&packetlen, sizeof(size_t));
 	srl_funcs->write(data, packetlen);
 	
@@ -220,9 +200,11 @@ size_t pl_SendPacket(uint8_t *data, size_t len){
 size_t pl_ReadPacket(uint8_t *dest, size_t read_size){
 	static size_t packet_size = 0;
 	uint32_t start_time = timer_GetSafe(3, TIMER_UP);
+	if(device_status != PL_SUBSYS_READY) return 0;
+	if(dest == NULL) return 0;
+	if(read_size == 0) return 0;
 	do {
 		if(srl_funcs->process) srl_funcs->process();
-		if(!(device_status==PL_SERIAL_CONNECTED)) return 0;
 		if(packet_size){
 			if(srl_funcs->read_to_size(packet_size, dest)) {
 				packet_size = 0;
