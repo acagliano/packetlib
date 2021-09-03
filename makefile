@@ -16,9 +16,10 @@
 
 include $(CURDIR)/../common.mk
 
-LIB_SRC := srlpktce.asm
-LIB_LIB := srlpktce.lib
-LIB_8XV := srlpktce.8xv
+LIB_SRC := netpktce.asm
+LIB_LIB := netpktce.lib
+LIB_8XV := netpktce.8xv
+LIB_H	:= netpktce.h
 
 all: $(LIB_8XV)
 
@@ -32,6 +33,8 @@ clean:
 install: all
 	$(Q)$(call MKDIR,$(INSTALL_LIB))
 	$(Q)$(call COPY,$(LIB_LIB),$(INSTALL_LIB))
+	$(Q)$(call MKDIR,$(INSTALL_H))
+	$(Q)$(call COPY,$(LIB_H),$(INSTALL_LIB))
 
 .PHONY: all clean install
 

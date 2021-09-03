@@ -1,8 +1,0 @@
-library	"SRLPKTCE", 0
-	export	pl_InitSubsystem ; 0
-	export	pl_SetReadTimeout ; 3
-	export	pl_JoinPacketSegments ; 6
-	export	pl_SendPacket ; 9
-	export	pl_ReadPacket ; 12
-	export	pl_GetDeviceStatus ; 15
-	export	pl_Shutdown ; 18

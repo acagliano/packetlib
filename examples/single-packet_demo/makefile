@@ -10,6 +10,7 @@ ARCHIVED ?= NO
 
 CFLAGS ?= -Wall -Wextra -Oz
 CXXFLAGS ?= -Wall -Wextra -Oz
+HAS_PRINTF := NO
 
 # ----------------------------
 
