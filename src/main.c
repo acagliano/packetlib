@@ -32,7 +32,7 @@ uint8_t *dev_buffer;
 size_t dev_buffer_size;
 size_t dev_buffer_half_size;
 uint32_t blocking_read_timeout;
-uint32_t async_write_timeout;
+uint32_t async_write_timeout = (50 * TIMERCPU_TO_MS);
 
 
 srl_device_t srl_device;
