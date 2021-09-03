@@ -26,16 +26,14 @@ typedef enum {
 	PL_NTWK_INTERNAL_ERROR,
 	PL_NTWK_USER_ERROR = 0xff
 } device_status_t;
-device_status_t device_status = PL_SUBSYS_NONE;
+device_status_t device_status = PL_NTWK_NONE;
 
-typedef struct _device_config {
-	uint8_t *buffer;
-	size_t buffer_size;
-	size_t buffer_half_size;
-	uint32_t blocking_read_timeout;
-	uint32_t async_write_timeout;
-} device_config_t;
-device_config_t device_cfg = {0, 0, 0, 0, (50 * TIMERCPU_TO_MS)};
+uint8_t *dev_buffer;
+size_t dev_buffer_size;
+size_t dev_buffer_half_size;
+uint32_t blocking_read_timeout;
+uint32_t async_write_timeout;
+
 
 srl_device_t srl_device;
 usb_device_t usb_device = NULL;
@@ -52,7 +50,7 @@ static usb_error_t handle_usb_event(usb_event_t event, void *event_data,
 typedef struct {
     uint8_t id;
     bool (*init)(void);
-    bool (*process)(bool block);
+    void (*process)(bool block);
     bool (*read_to_size)(size_t size, uint8_t* out);
     void (*write)(void *data, size_t size);
 } device_callbacks_t;
@@ -118,8 +116,8 @@ static usb_error_t handle_usb_event(usb_event_t event, void *event_data,
 
 /* USB/SRL Subsystem */
 bool srl_read_to_size(size_t size, uint8_t *out) {
-    srl_bytes_read += srl_Read(&srl_device, &out[srl_bytes_read], size - srl_bytes_read);
-    if(srl_bytes_read >= size) {srl_bytes_read = 0; return true;}
+    bytes_read += srl_Read(&srl_device, &out[bytes_read], size - bytes_read);
+    if(bytes_read >= size) {bytes_read = 0; return true;}
     else return false;
 }
 
@@ -132,7 +130,7 @@ bool srl_setup(void) {
 	char dummy;
 	srl_error_t srl_error;
 	uint32_t start_time;
-	uint32_t wait_time = (20 * device_cfg.async_write_timeout);
+	uint32_t wait_time = (20 * async_write_timeout);
     usb_error_t usb_error = usb_Init(handle_usb_event, NULL, srl_GetCDCStandardDescriptors(), USB_DEFAULT_INIT_FLAGS);
     if(usb_error){ usb_Cleanup(); return false; }
     start_time = usb_GetCycleCounter();
@@ -140,7 +138,7 @@ bool srl_setup(void) {
 		usb_HandleEvents();
 	} while((device_status != PL_NTWK_ENABLED) &&
 			((usb_GetCycleCounter() - start_time) < wait_time));
-	srl_error = srl_Open(&srl_device, usb_device, device_cfg.buffer, device_cfg.buffer_size, SRL_INTERFACE_ANY, 115200);
+	srl_error = srl_Open(&srl_device, usb_device, dev_buffer, dev_buffer_size, SRL_INTERFACE_ANY, 115200);
 	if(srl_error) return false;
     srl_Read(&srl_device, &dummy, 1);
     return true;
@@ -148,12 +146,12 @@ bool srl_setup(void) {
 
 /* Pipe Subsystem */
 bool pipe_setup(void) {
-    device_status = PL_SUBSYS_READY;
+    device_status = PL_NTWK_READY;
     return true;
 }
 
 bool pipe_read_to_size(size_t size, uint8_t* out) {
-    if(srl_bytes_read < size) {
+    if(bytes_read < size) {
         size_t recd;
         recd = cemu_get(&out[bytes_read], size - bytes_read);	// asm routine
         bytes_read += recd;
@@ -169,13 +167,13 @@ bool pipe_read_to_size(size_t size, uint8_t* out) {
 }
 
 
-bool pl_DeviceConnect(uint8_t mode, uint8_t *buf, size_t buf_len, size_t timeout){
+bool pl_DeviceConnect(uint8_t mode, uint8_t *buf, size_t buf_len){
 	if( (buf == NULL) || (buf_len < 128) ) return false;
 	switch(mode) {
 		case MODE_SERIAL:
-			device_cfg.buffer = buf;
-			device_cfg.buffer_size = buf_len;
-			device_cfg.buffer_half_size = (buf_len>>1);
+			dev_buffer = buf;
+			dev_buffer_size = buf_len;
+			dev_buffer_half_size = (buf_len>>1);
 			if(cemu_check()){
 				dev_funcs.id = mode;
 				dev_funcs.init = pipe_setup;
@@ -207,66 +205,69 @@ void* pl_GetAsyncProcHandler(void){
 	return dev_funcs.process;
 }
 
-bool pl_QueueInit(uint8_t *queue_buf, size_t queue_len){
+bool pl_InitSendQueue(uint8_t *queue_buf, size_t queue_len){
 	if(queue == NULL) return false;
-	if(queue_len != (device_cfg.buffer_half_size-3)) return false;
+	if(queue_len < (dev_buffer_half_size-3)) return false;
 	queue = queue_buf;
 	queue_max = queue_len;
 	return true;
 }
 
-bool pl_QueuePacketSegment(uint8_t *data, size_t len){
-	if((queue_fill + len) > queue_max) return false;
-	memcpy(&queue[queue_fill], data, len);
-	queue_fill += len;
+bool pl_QueueSendPacketSegment(uint8_t *data, size_t len){
+	if((queue==NULL) || (data==NULL)) return false;
+	if(len==0) return false;
+	if((queue_filled + len) > queue_max) return false;
+	memcpy(&queue[queue_filled], data, len);
+	queue_filled += len;
+	return true;
 }
 
 
 #define MIN(x, y)	((x) < (y)) ? (x) : (y)
-size_t pl_SendPacket(uint8_t *data, size_t len, size_t timeout){
+size_t pl_SendPacket(uint8_t *data, size_t len){
 	uint8_t *source = (data==NULL) ? queue : data;
-	size_t packetlen = (data==NULL) ? queue_fill : MIN(srl_dbuf_size-3, len);
-	if ((source == data) && (len==0)) return 0;
-	if(device_status != PL_SUBSYS_READY) return 0;
-	net_funcs->write(&packetlen, sizeof(size_t));
-	net_funcs->write(source, packetlen);
-	if(source==queue) queue_fill = 0;
+	size_t packetlen = (data==NULL) ? queue_filled : MIN(dev_buffer_half_size-3, len);
+	if (packetlen==0) return 0;
+	if(device_status != PL_NTWK_READY) return 0;
+	dev_funcs.write(&packetlen, sizeof(size_t));
+	dev_funcs.write(source, packetlen);
+	if(source==queue) queue_filled = 0;
 	return packetlen;
 }
 
 size_t pl_ReadPacket(uint8_t *dest, size_t read_size){
 	static size_t packet_size = 0;
 	uint32_t start_time;
-	uint32_t wait_time = (device_cfg.blocking_read_timeout * TIMERCPU_TO_MS);
-	if(device_status != PL_SUBSYS_READY) return 0;
+	uint32_t wait_time = (blocking_read_timeout * TIMERCPU_TO_MS);
+	if(device_status != PL_NTWK_READY) return 0;
 	if(dest == NULL) return 0;
 	if(read_size == 0) return 0;
 	start_time = usb_GetCycleCounter();
 	do {
-		if(net_funcs->process) net_funcs->process();
+		if(dev_funcs.process) dev_funcs.process(false);
 		if(packet_size){
-			if(net_funcs->read_to_size(packet_size, dest)) {
+			if(dev_funcs.read_to_size(packet_size, dest)) {
 				packet_size = 0;
 				return read_size;
 			}
 		}
 		else
-			if(net_funcs->read_to_size(sizeof(packet_size), dest)) packet_size = *(size_t*)dest;
+			if(dev_funcs.read_to_size(sizeof(packet_size), dest)) packet_size = *(size_t*)dest;
 	} while((usb_GetCycleCounter() - start_time) < wait_time);
 	return 0;
 }
 
 
 void pl_Shutdown(size_t timeout){
-	switch(srl_funcs->id){
+	switch(dev_funcs.id){
 		case MODE_SERIAL:
 		{
-			time_wait = timeout * TIMERCPU_TO_MS;
-			time_start = usb_GetCycleCounter();
+			uint32_t time_wait = (timeout * TIMERCPU_TO_MS);
+			uint32_t time_start = usb_GetCycleCounter();
 			do {
-				usb_HandleEvents;		// maybe call this more than once
-			while (!SRL_SEND_DONE &&
-					((usb_GetCycleCounter - time_start) < time_wait));
+				if(dev_funcs.process) dev_funcs.process(false);
+			} while ((!SRL_SEND_DONE) &&
+					((usb_GetCycleCounter() - time_start) < time_wait));
 			srl_Close(&srl_device);
 			usb_Cleanup();
 			break;
@@ -274,5 +275,5 @@ void pl_Shutdown(size_t timeout){
 		default:
 			break;
 	}
-	device_status = PL_SUBSYS_NONE;
+	device_status = PL_NTWK_NONE;
 }
