@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
+#include <srldrvce.h>
 
 /*
 	DEFINES A PACKETIZATION STANDARD FOR COMMUNICATION OVER THE SERIAL DEVICE.
@@ -85,5 +86,7 @@ size_t pl_ReadPacket(uint8_t *dest, size_t read_size);
 // for serial mode, continues processing usb events until the given timeout expires, then
 // forcibly closes the serial and calls usb_Cleanup().
 void pl_Shutdown(size_t timeout);
+
+device_status_t pl_GetDeviceStatus(void);
 
 #endif

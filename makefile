@@ -34,7 +34,7 @@ install: all
 	$(Q)$(call MKDIR,$(INSTALL_LIB))
 	$(Q)$(call COPY,$(LIB_LIB),$(INSTALL_LIB))
 	$(Q)$(call MKDIR,$(INSTALL_H))
-	$(Q)$(call COPY,$(LIB_H),$(INSTALL_LIB))
+	$(Q)$(call COPY,$(LIB_H),$(INSTALL_H))
 
 .PHONY: all clean install
 

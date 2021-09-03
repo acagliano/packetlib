@@ -9,39 +9,38 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include <stdio.h>
 
 #include <tice.h>
 
-#include <srlpktce.h>
+#include <netpktce.h>
 #include <fileioc.h>
 
 
 #define CEMU_CONSOLE ((char*)0xFB0000)
 #define SRL_BUF_SIZE (1024)
 uint8_t srl_buf[SRL_BUF_SIZE];
+uint8_t queue[SRL_BUF_SIZE>>1];
 uint8_t packet[SRL_BUF_SIZE];
 uint8_t *strbuf = "The lazy fox jumped over the dog";
 
 int main(void)
 {
-	ps_t pk = {strbuf, strlen(strbuf)};
-	size_t pk_len;
-	subsys_config_t cfg = {srl_buf, SRL_BUF_SIZE};
+	pl_DeviceConnect(NET_MODE_SERIAL, srl_buf, SRL_BUF_SIZE);
+	pl_InitSendQueue(queue, SRL_BUF_SIZE>>1);
 	
-	pl_InitSubsystem(NET_MODE_SERIAL, &cfg, 2000);
 	printf("SubSys Init RV: %u\n", pl_GetDeviceStatus());
+	
 	os_GetKey();
-	pl_SetWriteTimeout(5000);
-	if(!(pl_GetDeviceStatus() == PL_SUBSYS_READY)) return 1;
+	if(!(pl_GetDeviceStatus() == PL_NTWK_READY)) return 1;
 	
+	pl_QueueSendPacketSegment(strbuf, strlen(strbuf));
+	pl_SendPacket(NULL, 0);
+	pl_ReadPacket(packet, 10);
 	
-	pk_len = pl_JoinPacketSegments(1, &pk, 1, packet);
-	pl_SendPacket(packet, pk_len);
-	
-	pl_Shutdown();
+	pl_Shutdown(1000);
 	
     return 0;
     
