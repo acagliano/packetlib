@@ -35,7 +35,7 @@ typedef enum {
 	Initializes the chosen subsystem internally
 	
 	# Inputs #
-	<> mode = defines the device mode to initialize
+	<> device = defines the device mode to initialize
 	<> buf = pointer to a buffer to be used by the subsystem
 	<> buf_len = the size of the buffer reserved
 	
@@ -54,7 +54,7 @@ void* pl_GetAsyncProcHandler(void);
 // initializes a queue to write segments of packets into before sending
 // segments go onto the queue in the order they are passed by calling this
 // function repeatedly.
-// queue length should at least 3 less than the buf_len passed in pl_DeviceConnect
+// queue length should at 3 less than the buf_len passed in pl_DeviceConnect at minimum
 bool pl_InitSendQueue(uint8_t *queue_buf, size_t queue_len);
 
 
