@@ -1,9 +1,0 @@
-library	"NETPKTCE", 0
-	export	pl_DeviceConnect ; 0
-	export	pl_GetDeviceStatus ; 3
-	export	pl_GetAsyncProcHandler ; 6
-	export	pl_InitSendQueue ; 9
-	export	pl_QueueSendPacketSegment ; 12
-	export	pl_SendPacket ; 15
-	export	pl_ReadPacket ; 18
-	export	pl_Shutdown ; 21
