@@ -44,7 +44,7 @@ PROJECT_NUMBER         = 1
 # for a project that appears at the top of each page and should give viewer a
 # quick idea about the purpose of the project. Keep the description short.
 
-PROJECT_BRIEF          = An implementation of a network packetization protocol for the TI-84+ CE graphing calculator. This project is unaffiliated with TI in any way. It is a custom, 3rd party protocol for sending data using the 3rd party SRLDRVCE (and other) libraries.
+PROJECT_BRIEF          = An implementation of a network packetization protocol for the TI-84+ CE graphing calculator. This project is unaffiliated with TI in any way. It is a custom, 3rd party, open-source protocol for sending data using the 3rd party SRLDRVCE (and other) libraries.
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
 # in the documentation. The maximum height of the logo should not exceed 55
