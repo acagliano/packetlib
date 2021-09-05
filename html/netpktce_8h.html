@@ -130,7 +130,7 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the implementation of TI-ONPP. </p>
-<p>TI-ONP is an acronym for TI Open Network Packet Protocol. It is a bare-bones protocol for sending packets to a connected host using some networking device.</p>
+<p>TI-ONPP is an acronym for TI Open Network Packet Protocol. It is a bare-bones protocol for sending packets to a connected host using some networking device.</p>
 <p>Provides an implementation of a basic packetization standard for the TI-84+ CE. The "standard" is simply:</p><ul>
 <li>3-byte size word indicating frame length (cannot be larger than the max packet size specified during Initialization)</li>
 <li>The data section of arbitrary (but bounded) length.</li>
@@ -149,7 +149,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a9042337dc2546d731f941e3c259d60daae7f32779b904eabedda54aaf063ff443"></a>NET_MODE_SERIAL&#160;</td><td class="fielddoc"><p>species the Serial/USB subsystem to be used for networking. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a9042337dc2546d731f941e3c259d60daae7f32779b904eabedda54aaf063ff443"></a>NET_MODE_SERIAL&#160;</td><td class="fielddoc"><p>specifees the Serial/USB subsystem to be used for networking. </p>
 </td></tr>
 </table>
 
@@ -175,7 +175,7 @@ Functions</h2></td></tr>
 </td></tr>
 <tr><td class="fieldname"><a id="ac099822b2180cb992ef85bdae61720c8a02a4cf8f0d42ae978eb99224fa75b89a"></a>PL_NTWK_INTERNAL_ERROR&#160;</td><td class="fielddoc"><p>Indicates that something internal prevented the device from working. This is likely a bug in the chosen subsystem code. Report it! </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ac099822b2180cb992ef85bdae61720c8af5fbbe33b451b7073f57d05ac77d0d4b"></a>PL_NTWK_USER_ERROR&#160;</td><td class="fielddoc"><p>Sorry, pal. This one is on you. </p>
+<tr><td class="fieldname"><a id="ac099822b2180cb992ef85bdae61720c8af5fbbe33b451b7073f57d05ac77d0d4b"></a>PL_NTWK_USER_ERROR&#160;</td><td class="fielddoc"><p>Sorry, pal. This one is on you. You probably supplied an invalid argument somewhere. </p>
 </td></tr>
 </table>
 

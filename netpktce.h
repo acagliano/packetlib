@@ -9,7 +9,7 @@
  *	@file netpktce.h
  *	@brief Defines the implementation of TI-ONPP
  *
- *	TI-ONP is an acronym for TI Open Network Packet Protocol.
+ *	TI-ONPP is an acronym for TI Open Network Packet Protocol.
  *	It is a bare-bones protocol for sending packets to a connected host using some networking device.
  *
  *	Provides an implementation of a basic packetization standard for the TI-84+ CE.
@@ -26,7 +26,7 @@
  * Specifies the subsystem (device) to enable for networking. As of now, only options are @b NET_MODE_SERIAL.
  **************************************************************************************************************************************/
 enum _device_types {
-    NET_MODE_SERIAL,		/**< species the Serial/USB subsystem to be used for networking. */
+    NET_MODE_SERIAL,		/**< specifees the Serial/USB subsystem to be used for networking. */
 };
 
 /************************************************************************************************
@@ -42,7 +42,7 @@ typedef enum {
 									This is a success code. */
 	PL_NTWK_INTERNAL_ERROR,		/**< Indicates that something internal prevented the device from working.
 									This is likely a bug in the chosen subsystem code. Report it! */
-	PL_NTWK_USER_ERROR = 0xff	/**< Sorry, pal. This one is on you. */
+	PL_NTWK_USER_ERROR = 0xff	/**< Sorry, pal. This one is on you. You probably supplied an invalid argument somewhere. */
 } device_status_t;
 
 
