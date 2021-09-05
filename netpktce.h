@@ -110,8 +110,8 @@ size_t pl_SendPacket(uint8_t *data, size_t len);
  *
  * @param dest Pointer to a buffer to read bytes to. Must be large enough to hold the largest
  * 		packet your use case uses..
- * @note This function defaults to a non-blocking read, meaning it checks if there is @b read_size+3 bytes
- * 		available in the receive buffer. Either way, it returns immediately.
+ * @note This function defaults to a non-blocking read, meaning it checks if there is a full packet
+ * 		available in the receive buffer and then immediately returns to the caller.
  * 		You may set this to a blocking read by using the pl_SetReadTimeout() function.
  * @returns True if a packet is available. False if not.
  * @note Because the header contains a size word, there is no need to pass a read size.
