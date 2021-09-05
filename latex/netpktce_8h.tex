@@ -1,0 +1,313 @@
+\hypertarget{netpktce_8h}{}\doxysection{netpktce.\+h File Reference}
+\label{netpktce_8h}\index{netpktce.h@{netpktce.h}}
+
+
+Defines the implementation of TI-\/\+ONP.  
+
+
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$srldrvce.\+h$>$}\newline
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{netpktce_8h_a9042337dc2546d731f941e3c259d60da}{\+\_\+device\+\_\+types}} \{ \mbox{\hyperlink{netpktce_8h_a9042337dc2546d731f941e3c259d60daae7f32779b904eabedda54aaf063ff443}{NET\+\_\+\+MODE\+\_\+\+SERIAL}}
+ \}
+\item 
+enum \mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8}{device\+\_\+status\+\_\+t}} \{ \newline
+\mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8a9adfe73c7adc0d4f7defd3da30f34efa}{PL\+\_\+\+NTWK\+\_\+\+NONE}}
+, \mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8aa86fca3d082961b174a85482a3b62759}{PL\+\_\+\+NTWK\+\_\+\+ENABLED}}
+, \mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8ae54dcb0654290d1e08371b680f39fccc}{PL\+\_\+\+NTWK\+\_\+\+READY}}
+, \mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8a02a4cf8f0d42ae978eb99224fa75b89a}{PL\+\_\+\+NTWK\+\_\+\+INTERNAL\+\_\+\+ERROR}}
+, \newline
+\mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8af5fbbe33b451b7073f57d05ac77d0d4b}{PL\+\_\+\+NTWK\+\_\+\+USER\+\_\+\+ERROR}} = 0xff
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{netpktce_8h_a9d27b59cced5b6de52af36019e4085b5}{pl\+\_\+\+Device\+Connect}} (uint8\+\_\+t device, uint8\+\_\+t $\ast$buf, size\+\_\+t buf\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Initializes the selected subsystem. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{netpktce_8h_ae58df8f84f50f72a2c62bd452d58a3ab}{pl\+\_\+\+Get\+Async\+Proc\+Handler}} (void)
+\begin{DoxyCompactList}\small\item\em Returns a pointer to the internal device events handler. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{netpktce_8h_a17665c1c86d5ee8e5c1b9aa60319e6c8}{pl\+\_\+\+Init\+Send\+Queue}} (uint8\+\_\+t $\ast$queue\+\_\+buf, size\+\_\+t queue\+\_\+len)
+\begin{DoxyCompactList}\small\item\em Initializes an optional send queue for outgoing messages. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{netpktce_8h_add53d8afeafa25f9094a809a4bbf12f2}{pl\+\_\+\+Queue\+Send\+Packet\+Segment}} (uint8\+\_\+t $\ast$data, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Writes a packet segment to the send queue. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}{pl\+\_\+\+Send\+Packet}} (uint8\+\_\+t $\ast$data, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Sends a packet or sends the the contents of the send queue. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{netpktce_8h_a2c78695f43c39502f3e01928acd0571b}{pl\+\_\+\+Read\+Packet}} (uint8\+\_\+t $\ast$dest)
+\begin{DoxyCompactList}\small\item\em Reads a number of bytes from the subsystem. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{netpktce_8h_a4bd5c7d968399a8027747ba7c47e4bdc}{pl\+\_\+\+Shutdown}} (size\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Shuts down the connected subsystem. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8}{device\+\_\+status\+\_\+t}} \mbox{\hyperlink{netpktce_8h_a145eb609880ec5a611b2633b632ab027}{pl\+\_\+\+Get\+Device\+Status}} (void)
+\begin{DoxyCompactList}\small\item\em Returns the status of the connected device. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{netpktce_8h_ad8675f6b874c0de4ef902363e22441dd}{pl\+\_\+\+Set\+Async\+Timeout}} (size\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Sets the timeout for the Async device process handler. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{netpktce_8h_a3eee61cca8169f57e0f216e562012aa6}{pl\+\_\+\+Set\+Read\+Timeout}} (size\+\_\+t timeout)
+\begin{DoxyCompactList}\small\item\em Sets the timeout for reading a packet. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Defines the implementation of TI-\/\+ONP. 
+
+TI-\/\+ONP is an acronym for TI Open Networking Protocol. It is a bare-\/bones protocol for sending packets to a connected host using some networking device.
+
+Provides an implementation of a basic packetization standard for the TI-\/84+ CE. The \char`\"{}standard\char`\"{} is simply\+:
+\begin{DoxyItemize}
+\item 3-\/byte size word indicating frame length (cannot be larger than the max packet size specified during Initialization)
+\item The data section of arbitrary (but bounded) length.
+\end{DoxyItemize}
+
+\begin{DoxyAuthor}{Author}
+Anthony {\itshape ACagliano} Cagliano 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{netpktce_8h_a9042337dc2546d731f941e3c259d60da}\label{netpktce_8h_a9042337dc2546d731f941e3c259d60da}} 
+\index{netpktce.h@{netpktce.h}!\_device\_types@{\_device\_types}}
+\index{\_device\_types@{\_device\_types}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{\_device\_types}{\_device\_types}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{netpktce_8h_a9042337dc2546d731f941e3c259d60da}{\+\_\+device\+\_\+types}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NET\_MODE\_SERIAL@{NET\_MODE\_SERIAL}!netpktce.h@{netpktce.h}}\index{netpktce.h@{netpktce.h}!NET\_MODE\_SERIAL@{NET\_MODE\_SERIAL}}}\mbox{\Hypertarget{netpktce_8h_a9042337dc2546d731f941e3c259d60daae7f32779b904eabedda54aaf063ff443}\label{netpktce_8h_a9042337dc2546d731f941e3c259d60daae7f32779b904eabedda54aaf063ff443}} 
+NET\+\_\+\+MODE\+\_\+\+SERIAL&species the Serial/\+USB subsystem to be used for networking. \\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{netpktce_8h_ac099822b2180cb992ef85bdae61720c8}\label{netpktce_8h_ac099822b2180cb992ef85bdae61720c8}} 
+\index{netpktce.h@{netpktce.h}!device\_status\_t@{device\_status\_t}}
+\index{device\_status\_t@{device\_status\_t}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{device\_status\_t}{device\_status\_t}}
+{\footnotesize\ttfamily enum \mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8}{device\+\_\+status\+\_\+t}}}
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PL\_NTWK\_NONE@{PL\_NTWK\_NONE}!netpktce.h@{netpktce.h}}\index{netpktce.h@{netpktce.h}!PL\_NTWK\_NONE@{PL\_NTWK\_NONE}}}\mbox{\Hypertarget{netpktce_8h_ac099822b2180cb992ef85bdae61720c8a9adfe73c7adc0d4f7defd3da30f34efa}\label{netpktce_8h_ac099822b2180cb992ef85bdae61720c8a9adfe73c7adc0d4f7defd3da30f34efa}} 
+PL\+\_\+\+NTWK\+\_\+\+NONE&No device. Generally doesn\textquotesingle{}t mean anything bad, just that you haven\textquotesingle{}t initialized. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PL\_NTWK\_ENABLED@{PL\_NTWK\_ENABLED}!netpktce.h@{netpktce.h}}\index{netpktce.h@{netpktce.h}!PL\_NTWK\_ENABLED@{PL\_NTWK\_ENABLED}}}\mbox{\Hypertarget{netpktce_8h_ac099822b2180cb992ef85bdae61720c8aa86fca3d082961b174a85482a3b62759}\label{netpktce_8h_ac099822b2180cb992ef85bdae61720c8aa86fca3d082961b174a85482a3b62759}} 
+PL\+\_\+\+NTWK\+\_\+\+ENABLED&Indicates that the subsystem is initialized, but not ready to send data. If this is the device status after calling \mbox{\hyperlink{netpktce_8h_a9d27b59cced5b6de52af36019e4085b5}{pl\+\_\+\+Device\+Connect()}}, this is an error. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PL\_NTWK\_READY@{PL\_NTWK\_READY}!netpktce.h@{netpktce.h}}\index{netpktce.h@{netpktce.h}!PL\_NTWK\_READY@{PL\_NTWK\_READY}}}\mbox{\Hypertarget{netpktce_8h_ac099822b2180cb992ef85bdae61720c8ae54dcb0654290d1e08371b680f39fccc}\label{netpktce_8h_ac099822b2180cb992ef85bdae61720c8ae54dcb0654290d1e08371b680f39fccc}} 
+PL\+\_\+\+NTWK\+\_\+\+READY&Indicates that the subsystem is initialized and ready to send data. This is a success code. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PL\_NTWK\_INTERNAL\_ERROR@{PL\_NTWK\_INTERNAL\_ERROR}!netpktce.h@{netpktce.h}}\index{netpktce.h@{netpktce.h}!PL\_NTWK\_INTERNAL\_ERROR@{PL\_NTWK\_INTERNAL\_ERROR}}}\mbox{\Hypertarget{netpktce_8h_ac099822b2180cb992ef85bdae61720c8a02a4cf8f0d42ae978eb99224fa75b89a}\label{netpktce_8h_ac099822b2180cb992ef85bdae61720c8a02a4cf8f0d42ae978eb99224fa75b89a}} 
+PL\+\_\+\+NTWK\+\_\+\+INTERNAL\+\_\+\+ERROR&Indicates that something internal prevented the device from working. This is likely a bug in the chosen subsystem code. Report it! \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PL\_NTWK\_USER\_ERROR@{PL\_NTWK\_USER\_ERROR}!netpktce.h@{netpktce.h}}\index{netpktce.h@{netpktce.h}!PL\_NTWK\_USER\_ERROR@{PL\_NTWK\_USER\_ERROR}}}\mbox{\Hypertarget{netpktce_8h_ac099822b2180cb992ef85bdae61720c8af5fbbe33b451b7073f57d05ac77d0d4b}\label{netpktce_8h_ac099822b2180cb992ef85bdae61720c8af5fbbe33b451b7073f57d05ac77d0d4b}} 
+PL\+\_\+\+NTWK\+\_\+\+USER\+\_\+\+ERROR&Sorry, pal. This one is on you. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{netpktce_8h_a9d27b59cced5b6de52af36019e4085b5}\label{netpktce_8h_a9d27b59cced5b6de52af36019e4085b5}} 
+\index{netpktce.h@{netpktce.h}!pl\_DeviceConnect@{pl\_DeviceConnect}}
+\index{pl\_DeviceConnect@{pl\_DeviceConnect}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_DeviceConnect()}{pl\_DeviceConnect()}}
+{\footnotesize\ttfamily bool pl\+\_\+\+Device\+Connect (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{device,  }\item[{uint8\+\_\+t $\ast$}]{buf,  }\item[{size\+\_\+t}]{buf\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Initializes the selected subsystem. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em device} & Specifies the subsystem to set up. Use the values from {\bfseries{enum}} {\bfseries{\+\_\+device\+\_\+types}}. \\
+\hline
+{\em buf} & Pointer to a buffer to use for the subsystem internally. \\
+\hline
+{\em buf\+\_\+len} & Size of the pointed buffer {\bfseries{buf}}. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{netpktce_8h_ae58df8f84f50f72a2c62bd452d58a3ab}\label{netpktce_8h_ae58df8f84f50f72a2c62bd452d58a3ab}} 
+\index{netpktce.h@{netpktce.h}!pl\_GetAsyncProcHandler@{pl\_GetAsyncProcHandler}}
+\index{pl\_GetAsyncProcHandler@{pl\_GetAsyncProcHandler}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_GetAsyncProcHandler()}{pl\_GetAsyncProcHandler()}}
+{\footnotesize\ttfamily void$\ast$ pl\+\_\+\+Get\+Async\+Proc\+Handler (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Returns a pointer to the internal device events handler. 
+
+Due to lack of interrupt support on the TI-\/84+ CE, in some cases you may be required to call an event handler stub in a tick-\/loop. In this case, return a function pointer like so\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{void (*handler)(\textcolor{keywordtype}{bool} block) = \mbox{\hyperlink{netpktce_8h_ae58df8f84f50f72a2c62bd452d58a3ab}{pl\_GetAsyncProcHandler}}();}
+\DoxyCodeLine{handler(\textcolor{keyword}{true}|\textcolor{keyword}{false})}
+
+\end{DoxyCode}
+ \begin{DoxyNote}{Note}
+The handler parameter specifies if the call to the async process handler should be blocking or non-\/blocking. Non-\/blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms). 
+\end{DoxyNote}
+\begin{DoxyReturn}{Returns}
+Pointer to the internal asyncronous subsystem event handler that can be run in blocking or non-\/blocking mode. For USB/\+Serial, a pointer a function that loops usb\+\_\+\+Handle\+Events() (either once or for a timeout). 
+\end{DoxyReturn}
+\mbox{\Hypertarget{netpktce_8h_a17665c1c86d5ee8e5c1b9aa60319e6c8}\label{netpktce_8h_a17665c1c86d5ee8e5c1b9aa60319e6c8}} 
+\index{netpktce.h@{netpktce.h}!pl\_InitSendQueue@{pl\_InitSendQueue}}
+\index{pl\_InitSendQueue@{pl\_InitSendQueue}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_InitSendQueue()}{pl\_InitSendQueue()}}
+{\footnotesize\ttfamily bool pl\+\_\+\+Init\+Send\+Queue (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{queue\+\_\+buf,  }\item[{size\+\_\+t}]{queue\+\_\+len }\end{DoxyParamCaption})}
+
+
+
+Initializes an optional send queue for outgoing messages. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em queue\+\_\+buf} & Pointer to a buffer to use as the outgoing message queue. \\
+\hline
+{\em queue\+\_\+len} & Length of the {\bfseries{queue\+\_\+buf}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+Assert {\bfseries{queue\+\_\+len}} $>$= (( {\bfseries{buf\+\_\+len}} / 2 ) -\/ 3). 
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{netpktce_8h_a9d27b59cced5b6de52af36019e4085b5}{pl\+\_\+\+Device\+Connect()}}. 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{netpktce_8h_add53d8afeafa25f9094a809a4bbf12f2}\label{netpktce_8h_add53d8afeafa25f9094a809a4bbf12f2}} 
+\index{netpktce.h@{netpktce.h}!pl\_QueueSendPacketSegment@{pl\_QueueSendPacketSegment}}
+\index{pl\_QueueSendPacketSegment@{pl\_QueueSendPacketSegment}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_QueueSendPacketSegment()}{pl\_QueueSendPacketSegment()}}
+{\footnotesize\ttfamily bool pl\+\_\+\+Queue\+Send\+Packet\+Segment (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{data,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+Writes a packet segment to the send queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Pointer to the data to write to the queue. \\
+\hline
+{\em len} & Length of {\bfseries{data}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if success. False if failure. 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+The queue is used to contruct a single packet, not to queue multiple packets. When you have queued all segments of a packet, then do\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}{pl\_SendPacket}}(NULL, 0);}
+
+\end{DoxyCode}
+ to send the queue. It will empty out the queue, reset its length to 0, and await new packet segments. 
+\end{DoxyNote}
+\mbox{\Hypertarget{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}\label{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}} 
+\index{netpktce.h@{netpktce.h}!pl\_SendPacket@{pl\_SendPacket}}
+\index{pl\_SendPacket@{pl\_SendPacket}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_SendPacket()}{pl\_SendPacket()}}
+{\footnotesize\ttfamily size\+\_\+t pl\+\_\+\+Send\+Packet (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{data,  }\item[{size\+\_\+t}]{len }\end{DoxyParamCaption})}
+
+
+
+Sends a packet or sends the the contents of the send queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Pointer to the buffer containing the packet to send. Alternatively, {\bfseries{NULL}} to send the queue. \\
+\hline
+{\em len} & The length of the packet at {\bfseries{data}}. Can be 0 if {\bfseries{data}} is NULL. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The length of the packet sent. May not equal {\bfseries{len}} if {\bfseries{len}} is greater than the send buffer length. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{netpktce_8h_a2c78695f43c39502f3e01928acd0571b}\label{netpktce_8h_a2c78695f43c39502f3e01928acd0571b}} 
+\index{netpktce.h@{netpktce.h}!pl\_ReadPacket@{pl\_ReadPacket}}
+\index{pl\_ReadPacket@{pl\_ReadPacket}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_ReadPacket()}{pl\_ReadPacket()}}
+{\footnotesize\ttfamily bool pl\+\_\+\+Read\+Packet (\begin{DoxyParamCaption}\item[{uint8\+\_\+t $\ast$}]{dest }\end{DoxyParamCaption})}
+
+
+
+Reads a number of bytes from the subsystem. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em dest} & Pointer to a buffer to read bytes to. Must be large enough to hold the largest packet your use case uses.. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+This function defaults to a non-\/blocking read, meaning it checks if there is {\bfseries{read\+\_\+size+3}} bytes available in the receive buffer. Either way, it returns immediately. You may set this to a blocking read by using the \mbox{\hyperlink{netpktce_8h_a3eee61cca8169f57e0f216e562012aa6}{pl\+\_\+\+Set\+Read\+Timeout()}} function. 
+\end{DoxyNote}
+\begin{DoxyReturn}{Returns}
+True if a packet is available. False if not. 
+\end{DoxyReturn}
+\begin{DoxyNote}{Note}
+Because the header contains a size word, there is no need to pass a read size. The protocol will alternate between attempting to read a {\bfseries{size\+\_\+t}} (3 bytes) and attempting to read that size.. 
+\end{DoxyNote}
+\mbox{\Hypertarget{netpktce_8h_a4bd5c7d968399a8027747ba7c47e4bdc}\label{netpktce_8h_a4bd5c7d968399a8027747ba7c47e4bdc}} 
+\index{netpktce.h@{netpktce.h}!pl\_Shutdown@{pl\_Shutdown}}
+\index{pl\_Shutdown@{pl\_Shutdown}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_Shutdown()}{pl\_Shutdown()}}
+{\footnotesize\ttfamily void pl\+\_\+\+Shutdown (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{timeout }\end{DoxyParamCaption})}
+
+
+
+Shuts down the connected subsystem. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em timeout} & Time, in milliseconds to wait, to let and processing device events complete, after which the device will be closed. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{netpktce_8h_a145eb609880ec5a611b2633b632ab027}\label{netpktce_8h_a145eb609880ec5a611b2633b632ab027}} 
+\index{netpktce.h@{netpktce.h}!pl\_GetDeviceStatus@{pl\_GetDeviceStatus}}
+\index{pl\_GetDeviceStatus@{pl\_GetDeviceStatus}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_GetDeviceStatus()}{pl\_GetDeviceStatus()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8}{device\+\_\+status\+\_\+t}} pl\+\_\+\+Get\+Device\+Status (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+Returns the status of the connected device. 
+
+\begin{DoxyReturn}{Returns}
+The status of the device. 
+\end{DoxyReturn}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{netpktce_8h_ac099822b2180cb992ef85bdae61720c8}{device\+\_\+status\+\_\+t}}. 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{netpktce_8h_ad8675f6b874c0de4ef902363e22441dd}\label{netpktce_8h_ad8675f6b874c0de4ef902363e22441dd}} 
+\index{netpktce.h@{netpktce.h}!pl\_SetAsyncTimeout@{pl\_SetAsyncTimeout}}
+\index{pl\_SetAsyncTimeout@{pl\_SetAsyncTimeout}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_SetAsyncTimeout()}{pl\_SetAsyncTimeout()}}
+{\footnotesize\ttfamily void pl\+\_\+\+Set\+Async\+Timeout (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{timeout }\end{DoxyParamCaption})}
+
+
+
+Sets the timeout for the Async device process handler. 
+
+\begin{DoxyNote}{Note}
+The async handler is invoked once when \mbox{\hyperlink{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}{pl\+\_\+\+Send\+Packet()}} is called. It can also be invoked by the user after returning \mbox{\hyperlink{netpktce_8h_ae58df8f84f50f72a2c62bd452d58a3ab}{pl\+\_\+\+Get\+Async\+Proc\+Handler()}}. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em timeout} & The timeout to set, in milliseconds. Pass 0 to set non-\/blocking. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{netpktce_8h_a3eee61cca8169f57e0f216e562012aa6}\label{netpktce_8h_a3eee61cca8169f57e0f216e562012aa6}} 
+\index{netpktce.h@{netpktce.h}!pl\_SetReadTimeout@{pl\_SetReadTimeout}}
+\index{pl\_SetReadTimeout@{pl\_SetReadTimeout}!netpktce.h@{netpktce.h}}
+\doxysubsubsection{\texorpdfstring{pl\_SetReadTimeout()}{pl\_SetReadTimeout()}}
+{\footnotesize\ttfamily void pl\+\_\+\+Set\+Read\+Timeout (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{timeout }\end{DoxyParamCaption})}
+
+
+
+Sets the timeout for reading a packet. 
+
+\begin{DoxyNote}{Note}
+The async handler is invoked once when \mbox{\hyperlink{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}{pl\+\_\+\+Send\+Packet()}} is called. It can also be invoked by the user after returning \mbox{\hyperlink{netpktce_8h_ae58df8f84f50f72a2c62bd452d58a3ab}{pl\+\_\+\+Get\+Async\+Proc\+Handler()}}. 
+\end{DoxyNote}
+
+\begin{DoxyParams}{Parameters}
+{\em timeout} & The timeout to set, in milliseconds. Pass 0 to set non-\/blocking. \\
+\hline
+\end{DoxyParams}
