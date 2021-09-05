@@ -7,10 +7,10 @@
 
 /*********************************************************************************************************************************************
  *	@file netpktce.h
- *	@brief Defines the implementation of TI-ONPP
+ *	@brief Defines the implementation of TI-ONP
  *
- *	TI-ONPP is an acronym for TI Open Network Packet Protocol.
- *	It is a bare-bones protocol for sending packets to a connected host using some networking device.
+ *	TI-ONPP is an acronym for TI Open Network Protocol.
+ *	It is a bare-bones open-source protocol for sending packets to a connected host using some networking device.
  *
  *	Provides an implementation of a basic packetization standard for the TI-84+ CE.
  *	The "standard" is simply:
