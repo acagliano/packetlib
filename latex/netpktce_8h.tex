@@ -2,7 +2,7 @@
 \label{netpktce_8h}\index{netpktce.h@{netpktce.h}}
 
 
-Defines the implementation of TI-\/\+ONP.  
+Defines the implementation of TI-\/\+ONPP.  
 
 
 {\ttfamily \#include $<$stddef.\+h$>$}\newline
@@ -49,9 +49,9 @@ void \mbox{\hyperlink{netpktce_8h_a3eee61cca8169f57e0f216e562012aa6}{pl\+\_\+\+S
 
 
 \doxysubsection{Detailed Description}
-Defines the implementation of TI-\/\+ONP. 
+Defines the implementation of TI-\/\+ONPP. 
 
-TI-\/\+ONP is an acronym for TI Open Networking Protocol. It is a bare-\/bones protocol for sending packets to a connected host using some networking device.
+TI-\/\+ONP is an acronym for TI Open Network Packet Protocol. It is a bare-\/bones protocol for sending packets to a connected host using some networking device.
 
 Provides an implementation of a basic packetization standard for the TI-\/84+ CE. The \char`\"{}standard\char`\"{} is simply\+:
 \begin{DoxyItemize}
@@ -236,7 +236,7 @@ Reads a number of bytes from the subsystem.
 \hline
 \end{DoxyParams}
 \begin{DoxyNote}{Note}
-This function defaults to a non-\/blocking read, meaning it checks if there is {\bfseries{read\+\_\+size+3}} bytes available in the receive buffer. Either way, it returns immediately. You may set this to a blocking read by using the \mbox{\hyperlink{netpktce_8h_a3eee61cca8169f57e0f216e562012aa6}{pl\+\_\+\+Set\+Read\+Timeout()}} function. 
+This function defaults to a non-\/blocking read, meaning it checks if there is a full packet available in the receive buffer and then immediately returns to the caller. You may set this to a blocking read by using the \mbox{\hyperlink{netpktce_8h_a3eee61cca8169f57e0f216e562012aa6}{pl\+\_\+\+Set\+Read\+Timeout()}} function. 
 \end{DoxyNote}
 \begin{DoxyReturn}{Returns}
 True if a packet is available. False if not. 
