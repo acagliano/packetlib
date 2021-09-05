@@ -36,9 +36,11 @@ int main(void)
 	os_GetKey();
 	if(!(pl_GetDeviceStatus() == PL_NTWK_READY)) return 1;
 	
-	pl_QueueSendPacketSegment(strbuf, strlen(strbuf));
-	pl_SendPacket(NULL, 0);
-	pl_ReadPacket(packet, 10);
+	if(pl_ReadPacket(packet, 1)) printf("serial read sucessful");
+	else printf("serial read failed");
+	//pl_QueueSendPacketSegment(strbuf, strlen(strbuf));
+	//pl_SendPacket(NULL, 0);
+	//pl_ReadPacket(packet, 10);
 	
 	pl_Shutdown(1000);
 	

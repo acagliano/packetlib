@@ -7,3 +7,5 @@ library	"NETPKTCE", 0
 	export	pl_SendPacket ; 15
 	export	pl_ReadPacket ; 18
 	export	pl_Shutdown ; 21
+	export	pl_SetAsyncTimeout ; 24
+	export	pl_SetReadTimeout ; 27

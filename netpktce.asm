@@ -23,6 +23,9 @@ export pl_QueueSendPacketSegment
 export pl_SendPacket
 export pl_ReadPacket
 export pl_Shutdown
+export pl_SetAsyncTimeout
+export pl_SetReadTimeout
+
 
 os_GetKey	:= $21D38
 
@@ -590,48 +593,56 @@ pl_SendPacket:
 	ld	hl, -6
 	call	ti._frameset
 	ld	hl, (ix + 6)
-	ld	bc, 0
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_1
-	ld	(ix + -6), hl
+	jq	z, .lbl_2
+	ld	a, 0
 	jq	.lbl_3
-.lbl_1:
-	ld	de, (_queue)
-	ld	(ix + -6), de
+.lbl_2:
+	ld	a, 1
 .lbl_3:
-	add	hl, bc
-	or	a, a
-	sbc	hl, bc
-	jq	nz, .lbl_5
-	ld	hl, (_queue_filled)
-	jq	.lbl_8
-.lbl_5:
-	ld	de, (ix + 9)
 	ld	bc, -3
+	bit	0, a
+	jq	z, .lbl_6
+	ld	hl, (_queue)
+.lbl_6:
+	ld	(ix + -6), hl
+	ld	hl, (ix + 9)
 	ld	iy, (_dev_buffer_half_size)
 	add	iy, bc
+	ld	bc, (_queue_filled)
+	bit	0, a
+	push	bc
+	pop	de
+	jq	nz, .lbl_9
+	push	hl
+	pop	de
+.lbl_9:
+	bit	0, a
+	jq	nz, .lbl_11
+	push	hl
+	pop	bc
+.lbl_11:
 	lea	hl, iy + 0
 	or	a, a
 	sbc	hl, de
-	jq	c, .lbl_7
-	push	de
+	jq	c, .lbl_13
+	push	bc
 	pop	iy
-.lbl_7:
+.lbl_13:
+	ld	(ix + -3), iy
 	lea	hl, iy + 0
-	ld	bc, 0
-.lbl_8:
-	ld	(ix + -3), hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_14
+	jq	z, .lbl_17
 	ld	hl, (_device_status)
 	ld	de, 2
 	or	a, a
 	sbc	hl, de
-	jq	nz, .lbl_15
+	ld	bc, 0
+	jq	nz, .lbl_19
 	ld	de, 3
 	ld	hl, (_dev_funcs+10)
 	push	de
@@ -648,20 +659,19 @@ pl_SendPacket:
 	pop	hl
 	pop	hl
 	ld	de, (_queue)
+	ld	bc, (ix + -3)
 	ld	hl, (ix + -6)
 	or	a, a
 	sbc	hl, de
-	jq	nz, .lbl_12
+	jq	nz, .lbl_19
+	ld	hl, (_queue_filled)
 	or	a, a
-	sbc	hl, hl
+	sbc	hl, bc
 	ld	(_queue_filled), hl
-.lbl_12:
-	ld	bc, (ix + -3)
-	jq	.lbl_13
-.lbl_14:
-	jq	.lbl_13
-.lbl_15:
-.lbl_13:
+	jq	.lbl_19
+.lbl_17:
+	ld	bc, 0
+.lbl_19:
 	push	bc
 	pop	hl
 	ld	sp, ix
@@ -669,54 +679,43 @@ pl_SendPacket:
 	ret
 
 pl_ReadPacket:
-	ld	hl, -8
+	ld	hl, -4
 	call	ti._frameset
-	ld	bc, 48000
-	ld	d, 0
-	ld	hl, (_blocking_read_timeout)
-	ld	a, (_blocking_read_timeout+3)
-	ld	e, a
-	ld	a, d
-	call	ti._lmulu
-	push	hl
-	pop	iy
-	ld	hl, (ix + 9)
-	add	hl, bc
-	or	a, a
-	sbc	hl, bc
-	jq	z, .lbl_1
 	ld	hl, (ix + 6)
+	xor	a, a
 	add	hl, bc
-	or	a, a
-	sbc	hl, bc
-	jq	z, .lbl_1
-	ld	hl, (_device_status)
-	ld	bc, 2
 	or	a, a
 	sbc	hl, bc
 	jq	nz, .lbl_1
-	ld	(ix + -4), e
-	ld	(ix + -3), iy
+	jq	.lbl_13
+.lbl_1:
+	ld	hl, (_device_status)
+	ld	de, 2
+	or	a, a
+	sbc	hl, de
+	jq	z, .lbl_2
+	jq	.lbl_13
+.lbl_2:
 	call	usb_GetCycleCounter
-	ld	(ix + -7), hl
-	ld	(ix + -8), e
-.lbl_7:
+	ld	(ix + -3), hl
+	ld	(ix + -4), e
+.lbl_3:
 	ld	hl, (_dev_funcs+4)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_9
+	jq	z, .lbl_5
 	ld	de, 0
 	push	de
 	call	_indcallhl
 	pop	hl
-.lbl_9:
+.lbl_5:
 	ld	hl, (_pl_ReadPacket.packet_size)
 	ld	iy, (_dev_funcs+7)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, .lbl_12
+	jq	nz, .lbl_6
 	ld	hl, (ix + 6)
 	push	hl
 	ld	hl, 3
@@ -727,12 +726,12 @@ pl_ReadPacket:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	nz, .lbl_13
+	jq	nz, .lbl_10
 	ld	hl, (ix + 6)
 	ld	hl, (hl)
 	ld	(_pl_ReadPacket.packet_size), hl
-	jq	.lbl_13
-.lbl_12:
+	jq	.lbl_10
+.lbl_6:
 	ld	de, (ix + 6)
 	push	de
 	push	hl
@@ -742,29 +741,32 @@ pl_ReadPacket:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	z, .lbl_15
-.lbl_13:
+	jq	z, .lbl_7
+.lbl_10:
 	call	usb_GetCycleCounter
-	ld	bc, (ix + -7)
-	ld	a, (ix + -8)
-	call	ti._lsub
 	ld	bc, (ix + -3)
 	ld	a, (ix + -4)
+	call	ti._lsub
+	ld	bc, (_blocking_read_timeout)
+	ld	a, (_blocking_read_timeout+3)
 	call	ti._lcmpu
-	jq	c, .lbl_7
-.lbl_1:
-	or	a, a
-	sbc	hl, hl
-.lbl_16:
-	ld	sp, ix
-	pop	ix
-	ret
-.lbl_15:
+	ld	a, 1
+	jq	c, .lbl_12
+	ld	a, 0
+.lbl_12:
+	bit	0, a
+	jq	nz, .lbl_3
+	xor	a, a
+	jq	.lbl_13
+.lbl_7:
 	or	a, a
 	sbc	hl, hl
 	ld	(_pl_ReadPacket.packet_size), hl
-	ld	hl, (ix + 9)
-	jq	.lbl_16
+	ld	a, 1
+.lbl_13:
+	ld	sp, ix
+	pop	ix
+	ret
 
 pl_Shutdown:
 	ld	hl, -7
@@ -816,6 +818,33 @@ pl_Shutdown:
 .lbl_7:
 	ld	(_device_status), hl
 	ld	sp, ix
+	pop	ix
+	ret
+	
+pl_SetAsyncTimeout:
+	call	ti._frameset0
+	ld	hl, (ix + 6)
+	ld	bc, 48000
+	xor	a, a
+	ld	e, a
+	call	ti._lmulu
+	ld	a, e
+	ld	(_async_write_timeout), hl
+	ld	(_async_write_timeout+3), a
+	pop	ix
+	ret
+
+
+pl_SetReadTimeout:
+	call	ti._frameset0
+	ld	hl, (ix + 6)
+	ld	bc, 48000
+	xor	a, a
+	ld	e, a
+	call	ti._lmulu
+	ld	a, e
+	ld	(_blocking_read_timeout), hl
+	ld	(_blocking_read_timeout+3), a
 	pop	ix
 	ret
 	
