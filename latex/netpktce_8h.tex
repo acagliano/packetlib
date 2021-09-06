@@ -123,6 +123,8 @@ Due to lack of interrupt support on the TI-\/84+ CE, in some cases you may be re
 \end{DoxyCode}
  \begin{DoxyNote}{Note}
 The handler parameter specifies if the call to the async process handler should be blocking or non-\/blocking. Non-\/blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms). 
+
+This library will call the handler function in its own at some points, namely during \mbox{\hyperlink{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}{pl\+\_\+\+Send\+Packet()}} and \mbox{\hyperlink{netpktce_8h_a2c78695f43c39502f3e01928acd0571b}{pl\+\_\+\+Read\+Packet()}}. If you have no need for consistent device processing, you can probably rely on the library\textquotesingle{}s calling of it; however if you are coding a more dynamic networking application that exchanges large quantities of data, it may be helpful to tick it yourself, even if it may not be needed, simply to ensure that you are emptying out your send and receive buffers as quickly as possible. 
 \end{DoxyNote}
 \begin{DoxyReturn}{Returns}
 Pointer to the internal asyncronous subsystem event handler that can be run in blocking or non-\/blocking mode. For USB/\+Serial, a pointer a function that loops usb\+\_\+\+Handle\+Events() (either once or for a timeout). 
@@ -148,7 +150,7 @@ Initializes an optional send queue for outgoing messages.
 Assert {\bfseries{queue\+\_\+len}} $>$= (( {\bfseries{buf\+\_\+len}} / 2 ) -\/ 3). 
 \end{DoxyNote}
 \begin{DoxySeeAlso}{See also}
-pl\+\_\+\+Device\+Connect(). 
+\mbox{\hyperlink{netpktce_8h_a49f3c0ed09ccd67b4f0345e99ed4471d}{pl\+\_\+\+Set\+Device()}}. 
 \end{DoxySeeAlso}
 \mbox{\Hypertarget{netpktce_8h_add53d8afeafa25f9094a809a4bbf12f2}\label{netpktce_8h_add53d8afeafa25f9094a809a4bbf12f2}} 
 \index{netpktce.h@{netpktce.h}!pl\_QueueSendPacketSegment@{pl\_QueueSendPacketSegment}}

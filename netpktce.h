@@ -63,6 +63,11 @@ bool pl_SetDevice(uint8_t dev_type, void *dev_ref, size_t buf_len);
  * @endcode
  * @note The handler parameter specifies if the call to the async process handler should be blocking or non-blocking.
  * 		Non-blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms).
+ * @note This library will call the handler function in its own at some points, namely during pl_SendPacket() and
+ * 		pl_ReadPacket(). If you have no need for consistent device processing, you can probably rely on the library's
+ * 		calling of it; however if you are coding a more dynamic networking application that exchanges large quantities
+ * 		of data, it may be helpful to tick it yourself, even if it may not be needed, simply to ensure that you are
+ * 		emptying out your send and receive buffers as quickly as possible.
  * @returns Pointer to the internal asyncronous subsystem event handler that can be run in blocking or non-blocking mode.
  * 		For USB/Serial, a pointer a function that loops usb_HandleEvents() (either once or for a timeout).
  *****************************************************************************************************************************************/
@@ -73,7 +78,7 @@ void* pl_GetAsyncProcHandler(void);
  *
  * @param queue_buf Pointer to a buffer to use as the outgoing message queue.
  * @param queue_len Length of the @b queue_buf.
- * @note Assert @b queue_len >= (( @b buf_len / 2 ) - 3). @see pl_DeviceConnect().
+ * @note Assert @b queue_len >= (( @b buf_len / 2 ) - 3). @see pl_SetDevice().
  *******************************************************************************************************/
 bool pl_InitSendQueue(uint8_t *queue_buf, size_t queue_len);
 

@@ -217,7 +217,9 @@ Functions</h2></td></tr>
 <p>Due to lack of interrupt support on the TI-84+ CE, in some cases you may be required to call an event handler stub in a tick-loop. In this case, return and use a function pointer like so. Note that because the handler may sometimes be NULL (no handler) you should check if the hander is not NULL before trying to call it. </p><div class="fragment"><div class="line">void (*handler)(<span class="keywordtype">bool</span> block) = <a class="code" href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab">pl_GetAsyncProcHandler</a>();</div>
 <div class="line"><span class="keywordflow">if</span>(handler) handler(<span class="keyword">true</span>|<span class="keyword">false</span>)</div>
 <div class="ttc" id="anetpktce_8h_html_ae58df8f84f50f72a2c62bd452d58a3ab"><div class="ttname"><a href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab">pl_GetAsyncProcHandler</a></div><div class="ttdeci">void * pl_GetAsyncProcHandler(void)</div><div class="ttdoc">Returns a pointer to the internal device events handler.</div></div>
-</div><!-- fragment --> <dl class="section note"><dt>Note</dt><dd>The handler parameter specifies if the call to the async process handler should be blocking or non-blocking. Non-blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms). </dd></dl>
+</div><!-- fragment --> <dl class="section note"><dt>Note</dt><dd>The handler parameter specifies if the call to the async process handler should be blocking or non-blocking. Non-blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms). </dd>
+<dd>
+This library will call the handler function in its own at some points, namely during <a class="el" href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4" title="Sends a packet or sends the the contents of the send queue.">pl_SendPacket()</a> and <a class="el" href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b" title="Reads a number of bytes from the subsystem.">pl_ReadPacket()</a>. If you have no need for consistent device processing, you can probably rely on the library's calling of it; however if you are coding a more dynamic networking application that exchanges large quantities of data, it may be helpful to tick it yourself, even if it may not be needed, simply to ensure that you are emptying out your send and receive buffers as quickly as possible. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the internal asyncronous subsystem event handler that can be run in blocking or non-blocking mode. For USB/Serial, a pointer a function that loops usb_HandleEvents() (either once or for a timeout). </dd></dl>
 
 </div>
@@ -257,7 +259,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Assert <b>queue_len</b> &gt;= (( <b>buf_len</b> / 2 ) - 3). </dd></dl>
-<dl class="section see"><dt>See also</dt><dd>pl_DeviceConnect(). </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="netpktce_8h.html#a49f3c0ed09ccd67b4f0345e99ed4471d" title="Saves internally a reference to an initialized networking device for transmission.">pl_SetDevice()</a>. </dd></dl>
 
 </div>
 </div>
