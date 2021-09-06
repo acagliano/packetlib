@@ -34,8 +34,8 @@ enum _device_types {
 /***************************************************************************************************************************
  * @brief Saves internally a reference to an initialized networking device for transmission.
  *
- * @param device Specifies the type of device to use. Use the values from @b enum @b _device_types.
- * @param buf Pointer to the device reference structure. (Ex: @e srl_device_t* for serial)
+ * @param dev_type Specifies the type of device to use. Use the values from @b enum @b _device_types.
+ * @param dev_ref Pointer to the device reference structure. (Ex: @e srl_device_t* for serial)
  * @param buf_len Size of the internal buffer reserved for the specified device
  * 		(Ex: for serial, the total size of the serial buffer).
  * @note Here is an example of code, showing what the arguments mean:
