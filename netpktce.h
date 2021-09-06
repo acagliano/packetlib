@@ -82,7 +82,7 @@ void* pl_GetAsyncProcHandler(void);
  *******************************************************************************************************/
 bool pl_InitSendQueue(uint8_t *queue_buf, size_t queue_len);
 
-/**
+/****************************************************************************************************
  * @brief Writes a packet segment to the send queue.
  *
  * @param data Pointer to the data to write to the queue.
@@ -95,10 +95,10 @@ bool pl_InitSendQueue(uint8_t *queue_buf, size_t queue_len);
  * 		@endcode
  * 		to send the queue. It will empty out the queue, reset its length to 0,
  * 		and await new packet segments.
- */
+ ********************************************************************************************************/
 bool pl_QueueSendPacketSegment(uint8_t *data, size_t len);
 
-/**
+/**********************************************************************************************************************************
  * @brief Sends a packet or sends the the contents of the send queue.
  *
  * Attempts to send data via the whatever device is passed in pl_SetDevice().
@@ -115,10 +115,10 @@ bool pl_QueueSendPacketSegment(uint8_t *data, size_t len);
  * 		an error, namely buffer limit, is assumed to have occured. The packet send loop immediately breaks,
  * 		returning the size that was successfully sent. It is up to the user if it is important to them to check
  * 		for and possibly handle this error condition or if it can simply be ignored.
- */
+ ********************************************************************************************************************************/
 size_t pl_SendPacket(uint8_t *data, size_t len);
 
-/**
+/***************************************************************************************************************************************
  * @brief Reads a number of bytes from the subsystem.
  *
  * @param dest Pointer to a buffer to read bytes to. Must be large enough to hold the largest
@@ -130,23 +130,28 @@ size_t pl_SendPacket(uint8_t *data, size_t len);
  * @note Because the packet header contains a size word, there is no need to pass a read size.
  * 		The protocol will alternate between attempting to read a @b size_t (3 bytes) and attempting
  * 		to read the length the last size_t indicated.
- */
+ * @note Like the send function, the read function can also support packet overflow, but it handles it differently.
+ * 		In this case, once the expected size is known, the library will attempt to read the @b least of either: the
+ * 		expected size or the receive buffer length. After performing the read, it will reduce the expected size by
+ * 		the last read. If the expected size is now 0, the packet is complete, and it awaits a new size. However, if
+ * 		the expected size is still non-zero, it continues to await more packet data until the expected size is reached.
+ ***************************************************************************************************************************************/
 bool pl_ReadPacket(uint8_t *dest);
 
-/**
+/*****************************************************************************************************
  * @brief Sets the timeout for the Async device process handler.
  * @note The async handler is invoked once when pl_SendPacket() is called.
  * 		It can also be invoked by the user after returning pl_GetAsyncProcHandler().
  * @param timeout The timeout to set, in milliseconds. Pass 0 to set non-blocking.
- */
+ *****************************************************************************************************/
 void pl_SetAsyncTimeout(size_t timeout);
 
-/**
+/****************************************************************************************************
  * @brief Sets the timeout for reading a packet.
  * @note The async handler is invoked once when pl_SendPacket() is called.
  * 		It can also be invoked by the user after returning pl_GetAsyncProcHandler().
  * @param timeout The timeout to set, in milliseconds. Pass 0 to set non-blocking.
- */
+ ****************************************************************************************************/
 void pl_SetReadTimeout(size_t timeout);
 
 #endif

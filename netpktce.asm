@@ -550,34 +550,34 @@ pl_ReadPacket:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB9_1
-	jq	BB9_15
-BB9_1:
+	jq	nz, .lbl_1
+	jq	.lbl_15
+.lbl_1:
 	or	a, a
-	jq	nz, BB9_2
-	jq	BB9_15
-BB9_2:
+	jq	nz, .lbl_2
+	jq	.lbl_15
+.lbl_2:
 	call	usb_GetCycleCounter
 	ld	(ix + -3), hl
 	ld	(ix + -4), e
-BB9_3:
+.lbl_3:
 	ld	hl, (_dev_funcs)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB9_5
+	jq	z, .lbl_5
 	ld	de, 0
 	push	de
-	call	__indcallhl
+	call	_indcallhl
 	pop	hl
-BB9_5:
+.lbl_5:
 	ld	bc, (_pl_ReadPacket.packet_size)
 	push	bc
 	pop	hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, BB9_6
+	jq	nz, .lbl_6
 	ld	hl, (_dev_funcs+3)
 	ld	de, (ix + 6)
 	push	de
@@ -589,21 +589,21 @@ BB9_5:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	nz, BB9_12
+	jq	nz, .lbl_12
 	ld	hl, (ix + 6)
 	ld	hl, (hl)
 	ld	(_pl_ReadPacket.packet_size), hl
-	jq	BB9_12
-BB9_6:
+	jq	.lbl_12
+.lbl_6:
 	ld	de, (_buffer_half_len)
 	push	bc
 	pop	hl
 	or	a, a
 	sbc	hl, de
-	jq	c, BB9_8
+	jq	c, .lbl_8
 	push	de
 	pop	bc
-BB9_8:
+.lbl_8:
 	ld	hl, (_dev_funcs+3)
 	ld	de, (ix + 6)
 	push	de
@@ -615,7 +615,7 @@ BB9_8:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	nz, BB9_12
+	jq	nz, .lbl_12
 	ld	hl, (_pl_ReadPacket.packet_size)
 	ld	de, (ix + -7)
 	or	a, a
@@ -624,8 +624,8 @@ BB9_8:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, BB9_18
-BB9_12:
+	jq	z, .lbl_18
+.lbl_12:
 	call	usb_GetCycleCounter
 	ld	bc, (ix + -3)
 	ld	a, (ix + -4)
@@ -634,16 +634,16 @@ BB9_12:
 	ld	a, (_blocking_read_timeout+3)
 	call	ti._lcmpu
 	ld	a, 1
-	jq	c, BB9_14
+	jq	c, .lbl_14
 	ld	a, 0
-BB9_14:
+.lbl_14:
 	bit	0, a
-	jq	nz, BB9_3
+	jq	nz, .lbl_3
 	ld	e, 0
-	jq	BB9_15
-BB9_18:
+	jq	.lbl_15
+.lbl_18:
 	ld	e, 1
-BB9_15:
+.lbl_15:
 	ld	a, e
 	ld	sp, ix
 	pop	ix
