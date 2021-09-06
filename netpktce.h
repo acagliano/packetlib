@@ -69,7 +69,7 @@ bool pl_SetDevice(uint8_t dev_type, void *dev_ref, size_t buf_len);
  * 		of data, it may be helpful to tick it yourself, even if it may not be needed, simply to ensure that you are
  * 		emptying out your send and receive buffers as quickly as possible.
  * @returns Pointer to the internal asyncronous subsystem event handler that can be run in blocking or non-blocking mode.
- * 		For USB/Serial, a pointer a function that loops usb_HandleEvents() (either once or for a timeout).
+ * 		For USB/Serial, a pointer to a function that loops usb_HandleEvents() (either once or for a timeout).
  *****************************************************************************************************************************************/
 void* pl_GetAsyncProcHandler(void);
 
@@ -114,7 +114,7 @@ bool pl_QueueSendPacketSegment(uint8_t *data, size_t len);
  * @note If at any point a frame reports that the number of bytes sent does not match what is expected,
  * 		an error, namely buffer limit, is assumed to have occured. The packet send loop immediately breaks,
  * 		returning the size that was successfully sent. It is up to the user if it is important to them to check
- * 		for this error condition or if it can simply be ignored.
+ * 		for and possibly handle this error condition or if it can simply be ignored.
  */
 size_t pl_SendPacket(uint8_t *data, size_t len);
 
@@ -122,12 +122,12 @@ size_t pl_SendPacket(uint8_t *data, size_t len);
  * @brief Reads a number of bytes from the subsystem.
  *
  * @param dest Pointer to a buffer to read bytes to. Must be large enough to hold the largest
- * 		packet your use case uses..
+ * 		packet your application uses.
  * @note This function defaults to a non-blocking read, meaning it checks if there is a full packet
  * 		available in the receive buffer and then immediately returns to the caller.
  * 		You may set this to a blocking read by using the pl_SetReadTimeout() function.
  * @returns True if a packet is available. False if not.
- * @note Because the header contains a size word, there is no need to pass a read size.
+ * @note Because the packet header contains a size word, there is no need to pass a read size.
  * 		The protocol will alternate between attempting to read a @b size_t (3 bytes) and attempting
  * 		to read the length the last size_t indicated.
  */
