@@ -27,7 +27,7 @@
  * Specifies the subsystem (device) to enable for networking. As of now, only options are @b NET_MODE_SERIAL.
  **************************************************************************************************************************************/
 enum _device_types {
-	DEVICE_NONE,
+	DEVICE_NONE,		/**< indicates that no device is set. This is a default state. */
     DEVICE_SERIAL,		/**< specifees the Serial/USB subsystem to be used for networking. */
 };
 
@@ -59,7 +59,7 @@ bool pl_SetDevice(uint8_t dev_type, void *dev_ref, size_t buf_len);
  * before trying to call it.
  * @code
  * void (*handler)(bool block) = pl_GetAsyncProcHandler();
- * if(hander) handler(true|false)
+ * if(handler) handler(true|false)
  * @endcode
  * @note The handler parameter specifies if the call to the async process handler should be blocking or non-blocking.
  * 		Non-blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms).
@@ -96,9 +96,20 @@ bool pl_QueueSendPacketSegment(uint8_t *data, size_t len);
 /**
  * @brief Sends a packet or sends the the contents of the send queue.
  *
+ * Attempts to send data via the whatever device is passed in pl_SetDevice().
+ * Determines the maximum packet size, and breaks the input into multiple frames.
+ * Each "frame" starts a blocking asyncronous event handler with a timeout of 50ms, giving the device time
+ * to clear out any backlog in the send buffer. After this timeout, a 3-byte size word, followed by the frame data
+ * is written to the output buffer.
+ *
  * @param data Pointer to the buffer containing the packet to send. Alternatively, @b NULL to send the queue.
  * @param len The length of the packet at @b data. Can be 0 if @b data is NULL.
- * @returns The length of the packet sent. May not equal @b len if @b len is greater than the send buffer length.
+ * @returns The length of the packet sent. Will loop sending multiple packet frames until the passed buffer
+ * 		or queue is fully sent or an error occurs.
+ * @note If at any point a frame reports that the number of bytes sent does not match what is expected,
+ * 		an error, namely buffer limit, is assumed to have occured. The packet send loop immediately breaks,
+ * 		returning the size that was successfully sent. It is up to the user if it is important to them to check
+ * 		for this error condition or if it can simply be ignored.
  */
 size_t pl_SendPacket(uint8_t *data, size_t len);
 
@@ -112,8 +123,8 @@ size_t pl_SendPacket(uint8_t *data, size_t len);
  * 		You may set this to a blocking read by using the pl_SetReadTimeout() function.
  * @returns True if a packet is available. False if not.
  * @note Because the header contains a size word, there is no need to pass a read size.
- * 		The protocol will alternate between attempting to read a @b size_t (3 bytes) and
- * 		attempting to read that size..
+ * 		The protocol will alternate between attempting to read a @b size_t (3 bytes) and attempting
+ * 		to read the length the last size_t indicated.
  */
 bool pl_ReadPacket(uint8_t *dest);
 
