@@ -15,14 +15,12 @@ include_library '../srldrvce/srldrvce.asm'
 ;-------------------------------------------------------------------------------
 ; v0 functions (not final, subject to change!)
 ;-------------------------------------------------------------------------------
-export pl_DeviceConnect
-export pl_GetDeviceStatus
+export pl_SetDevice
 export pl_GetAsyncProcHandler
 export pl_InitSendQueue
 export pl_QueueSendPacketSegment
 export pl_SendPacket
 export pl_ReadPacket
-export pl_Shutdown
 export pl_SetAsyncTimeout
 export pl_SetReadTimeout
 
@@ -68,7 +66,7 @@ _srl_read_to_size:
 	call	ti._frameset0
 	ld	hl, (ix + 6)
 	ld	iy, (ix + 9)
-	ld	de, _srl_device
+	ld	de, (_device)
 	ld	bc, (_bytes_read)
 	add	iy, bc
 	or	a, a
@@ -108,16 +106,12 @@ _srl_read_to_size:
 	
 _srl_send:
 	call	ti._frameset0
-	ld	hl, 1
-	push	hl
-	call	_async_srl_process
-	pop	hl
-	ld	hl, (ix + 9)
-	push	hl
 	ld	hl, (ix + 6)
+	ld	de, (ix + 9)
+	ld	bc, (_device)
+	push	de
 	push	hl
-	ld	hl, _srl_device
-	push	hl
+	push	bc
 	call	srl_Write
 	ld	sp, ix
 	pop	ix
@@ -136,8 +130,9 @@ _async_srl_process:
 	ld	(ix + -3), hl
 .lbl_3:
 	call	usb_HandleEvents
-	ld	hl, (_srl_device+23)
-	ld	de, (_srl_device+26)
+	ld	iy, (_device)
+	ld	hl, (iy + 23)
+	ld	de, (iy + 26)
 	or	a, a
 	sbc	hl, de
 	jq	z, .lbl_5
@@ -155,187 +150,6 @@ _async_srl_process:
 .lbl_5:
 	ld	sp, ix
 	pop	ix
-	ret
-	
-_srl_setup:
-	ld	hl, -9
-	call	ti._frameset
-	ld	bc, 20
-	ld	d, 0
-	ld	hl, (_async_write_timeout)
-	ld	a, (_async_write_timeout+3)
-	ld	e, a
-	ld	a, d
-	call	ti._lmulu
-	ld	(ix + -4), hl
-	ld	(ix + -5), e
-	call	srl_GetCDCStandardDescriptors
-	ld	de, 36106
-	push	de
-	push	hl
-	ld	hl, 0
-	push	hl
-	ld	hl, _handle_usb_event
-	push	hl
-	call	usb_Init
-	pop	de
-	pop	de
-	pop	de
-	pop	de
-	add	hl, bc
-	or	a, a
-	sbc	hl, bc
-	jq	nz, .lbl_1
-	call	usb_GetCycleCounter
-	ld	(ix + -8), hl
-	ld	(ix + -9), e
-.lbl_3:
-	call	usb_HandleEvents
-	ld	hl, (_device_status)
-	ld	de, 1
-	or	a, a
-	sbc	hl, de
-	jq	z, .lbl_5
-	call	usb_GetCycleCounter
-	ld	bc, (ix + -8)
-	ld	a, (ix + -9)
-	call	ti._lsub
-	ld	bc, (ix + -4)
-	ld	a, (ix + -5)
-	call	ti._lcmpu
-	jq	c, .lbl_3
-.lbl_5:
-	ld	iy, (_usb_device)
-	ld	de, (_dev_buffer)
-	ld	bc, (_dev_buffer_size)
-	ld	hl, 115200
-	push	hl
-	ld	hl, -1
-	push	hl
-	push	bc
-	push	de
-	push	iy
-	ld	hl, _srl_device
-	push	hl
-	call	srl_Open
-	pop	de
-	pop	de
-	pop	de
-	pop	de
-	pop	de
-	pop	de
-	add	hl, bc
-	or	a, a
-	sbc	hl, bc
-	ld	a, 0
-	jq	nz, .lbl_7
-	ld	hl, 1
-	push	hl
-	pea	ix + -1
-	ld	hl, _srl_device
-	push	hl
-	call	srl_Read
-	pop	hl
-	pop	hl
-	pop	hl
-	ld	a, 1
-	jq	.lbl_7
-.lbl_1:
-	call	usb_Cleanup
-	xor	a, a
-.lbl_7:
-	ld	sp, ix
-	pop	ix
-	ret
-	
-_handle_usb_event:
-	call	ti._frameset0
-	ld	hl, (ix + 6)
-	ld	iy, 0
-	ld	de, 1
-	or	a, a
-	sbc	hl, de
-	push	hl
-	pop	de
-	ld	bc, 8
-	or	a, a
-	sbc	hl, bc
-	jq	nc, .lbl_1
-	ld	bc, 0
-	ld	hl, .usb_handler_switch
-	add	hl, de
-	add	hl, de
-	add	hl, de
-	ld	hl, (hl)
-	jp	(hl)
-.lbl_3:
-	ld	hl, _srl_device
-	push	hl
-	call	srl_Close
-	pop	hl
-	ld	hl, 0
-	ld	(_usb_device), hl
-	ld	(_device_status), hl
-	call	usb_Cleanup
-	jq	.lbl_9
-.lbl_4:
-	call	usb_GetRole
-	ld	a, l
-	bit	4, a
-	ld	hl, (ix + 9)
-	push	hl
-	call	z, usb_ResetDevice
-	pop	hl
-	jq	.lbl_9
-.lbl_6:
-	ld	hl, 8
-	push	hl
-	push	bc
-	push	bc
-	call	usb_FindDevice
-	pop	de
-	pop	de
-	pop	de
-	add	hl, bc
-	or	a, a
-	sbc	hl, bc
-	jq	z, .lbl_8
-	ld	(_usb_device), hl
-.lbl_8:
-	ld	hl, 2
-	ld	(_device_status), hl
-.lbl_9:
-	ld	iy, 0
-.lbl_1:
-	lea	hl, iy + 0
-	pop	ix
-	ret
-.lbl_10:
-	call	usb_GetRole
-	ld	de, (ix + 9)
-	ld	iy, 0
-	ld	a, l
-	bit	4, a
-	jq	nz, .lbl_1
-	ld	(_usb_device), de
-	ld	hl, 1
-	ld	(_device_status), hl
-	jq	.lbl_1	
-.usb_handler_switch:
-	dl	.lbl_3
-	dl	.lbl_4
-	dl	.lbl_1
-	dl	.lbl_10
-	dl	.lbl_1
-	dl	.lbl_1
-	dl	.lbl_1
-	dl	.lbl_6
-
-
-_pipe_setup:
-	ld	hl, 2
-	ld	a, 1
-	ld	(_device_status), hl
 	ret
 	
 check_cmd = 2
@@ -434,71 +248,64 @@ _pipe_read_to_size:
 	pop	ix
 	ret
 
-pl_DeviceConnect:
+pl_SetDevice:
 	call	ti._frameset0
 	ld	a, (ix + 6)
-	ld	c, 0
-	or	a, a
-	jq	nz, .lbl_8
-	ld	de, (ix + 9)
-	push	de
-	pop	hl
+	ld	e, 0
+	cp	a, 2
+	jq	c, .lbl_1
+	jq	.lbl_13
+.lbl_1:
+	ld	hl, (ix + 9)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_9
+	jq	nz, .lbl_2
+	jq	.lbl_13
+.lbl_2:
 	ld	iy, (ix + 12)
-	ld	bc, 128
-	lea	hl, iy + 0
-	or	a, a
-	sbc	hl, bc
-	jq	c, .lbl_10
-	ld	(_dev_buffer), de
-	ld	(_dev_buffer_size), iy
+	ld	(_device), hl
+	ld	(_device_type), a
+	ld	(_buffer_len), iy
 	ld	c, 1
 	lea	hl, iy + 0
 	call	ti._ishru
-	ld	(_dev_buffer_half_size), hl
+	ld	(_buffer_half_len), hl
+	cp	a, 1
+	jq	nz, .lbl_13
 	call	_cemu_check
 	bit	0, a
-	jq	z, .lbl_5
-	ld	iy, 0
-	ld	hl, _pipe_setup
-	ld	bc, _cemu_send
-	ld	de, _pipe_read_to_size
-	jq	.lbl_6
-.lbl_8:
-	jq	.lbl_7
-.lbl_9:
-	jq	.lbl_7
-.lbl_10:
-	ld	c, 0
-	jq	.lbl_7
-.lbl_5:
-	ld	hl, _srl_setup
+	jq	nz, .lbl_4
 	ld	iy, _async_srl_process
-	ld	bc, _srl_send
-	ld	de, _srl_read_to_size
+	jq	.lbl_6
+.lbl_4:
+	ld	iy, 0
 .lbl_6:
-	xor	a, a
-	ld	(_dev_funcs), a
-	ld	(_dev_funcs+1), hl
-	ld	(_dev_funcs+4), iy
-	ld	(_dev_funcs+10), bc
-	ld	(_dev_funcs+7), de
-	call	_indcallhl
-	ld	c, a
+	bit	0, a
+	jq	nz, .lbl_7
+	ld	bc, _srl_send
+	jq	.lbl_9
 .lbl_7:
-	ld	a, c
+	ld	bc, _cemu_send
+.lbl_9:
+	bit	0, a
+	jq	nz, .lbl_10
+	ld	hl, _srl_read_to_size
+	jq	.lbl_12
+.lbl_10:
+	ld	hl, _pipe_read_to_size
+.lbl_12:
+	ld	e, 1
+	ld	(_dev_funcs), iy
+	ld	(_dev_funcs+6), bc
+	ld	(_dev_funcs+3), hl
+.lbl_13:
+	ld	a, e
 	pop	ix
 	ret
 
-pl_GetDeviceStatus:
-	ld	hl, (_device_status)
-	ret
-
 pl_GetAsyncProcHandler:
-	ld	hl, (_dev_funcs+4)
+	ld	hl, (_dev_funcs)
 	ret
 
 pl_InitSendQueue:
@@ -513,7 +320,7 @@ pl_InitSendQueue:
 .lbl_1:
 	ld	de, (ix + 9)
 	ld	bc, -3
-	ld	hl, (_dev_buffer_half_size)
+	ld	hl, (_buffer_half_len)
 	add	hl, bc
 	push	hl
 	pop	bc
@@ -590,67 +397,79 @@ pl_QueueSendPacketSegment:
 	ret
 
 pl_SendPacket:
-	ld	hl, -6
+	ld	hl, -12
 	call	ti._frameset
 	ld	hl, (ix + 6)
+	ld	bc, 0
+	ld	(ix + -6), hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_2
+	jq	z, .lbl_1
 	ld	a, 0
 	jq	.lbl_3
-.lbl_2:
+.lbl_1:
 	ld	a, 1
 .lbl_3:
-	ld	bc, -3
 	bit	0, a
-	jq	z, .lbl_6
+	jq	nz, .lbl_4
+	jq	.lbl_6
+.lbl_4:
 	ld	hl, (_queue)
-.lbl_6:
 	ld	(ix + -6), hl
-	ld	hl, (ix + 9)
-	ld	iy, (_dev_buffer_half_size)
-	add	iy, bc
-	ld	bc, (_queue_filled)
+.lbl_6:
+	ld	de, (ix + 9)
 	bit	0, a
-	push	bc
-	pop	de
-	jq	nz, .lbl_9
-	push	hl
-	pop	de
+	jq	nz, .lbl_7
+	ld	(ix + -12), de
+	jq	.lbl_9
+.lbl_7:
+	ld	hl, (_queue_filled)
+	ld	(ix + -12), hl
 .lbl_9:
-	bit	0, a
-	jq	nz, .lbl_11
-	push	hl
-	pop	bc
-.lbl_11:
-	lea	hl, iy + 0
-	or	a, a
-	sbc	hl, de
-	jq	c, .lbl_13
-	push	bc
-	pop	iy
-.lbl_13:
-	ld	(ix + -3), iy
-	lea	hl, iy + 0
+	ld	hl, (_dev_funcs)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_17
-	ld	hl, (_device_status)
-	ld	de, 2
+	jq	z, .lbl_11
+	ld	de, 1
+	push	de
+	call	_indcallhl
+	ld	de, (ix + 9)
+	ld	bc, 0
+	pop	hl
+.lbl_11:
+.lbl_12:
+	push	bc
+	pop	hl
 	or	a, a
 	sbc	hl, de
-	ld	bc, 0
-	jq	nz, .lbl_19
+	jq	nc, .lbl_16
+	ld	iy, (_buffer_half_len)
+	ld	de, -3
+	add	iy, de
+	ld	hl, (ix + -12)
+	ld	(ix + -9), bc
+	or	a, a
+	sbc	hl, bc
+	push	hl
+	pop	de
+	lea	hl, iy + 0
+	or	a, a
+	sbc	hl, de
+	jq	c, .lbl_15
+	push	de
+	pop	iy
+.lbl_15:
+	ld	(ix + -3), iy
+	ld	hl, (_dev_funcs+6)
 	ld	de, 3
-	ld	hl, (_dev_funcs+10)
 	push	de
 	pea	ix + -3
 	call	_indcallhl
 	pop	hl
 	pop	hl
-	ld	hl, (_dev_funcs+10)
+	ld	hl, (_dev_funcs+6)
 	ld	de, (ix + -3)
 	push	de
 	ld	de, (ix + -6)
@@ -658,20 +477,24 @@ pl_SendPacket:
 	call	_indcallhl
 	pop	hl
 	pop	hl
+	ld	hl, (ix + -3)
+	ld	de, (ix + -9)
+	add	hl, de
+	push	hl
+	pop	bc
+	ld	de, (ix + 9)
+	jq	.lbl_12
+.lbl_16:
 	ld	de, (_queue)
-	ld	bc, (ix + -3)
 	ld	hl, (ix + -6)
 	or	a, a
 	sbc	hl, de
-	jq	nz, .lbl_19
+	jq	nz, .lbl_18
 	ld	hl, (_queue_filled)
 	or	a, a
 	sbc	hl, bc
 	ld	(_queue_filled), hl
-	jq	.lbl_19
-.lbl_17:
-	ld	bc, 0
-.lbl_19:
+.lbl_18:
 	push	bc
 	pop	hl
 	ld	sp, ix
@@ -687,35 +510,28 @@ pl_ReadPacket:
 	or	a, a
 	sbc	hl, bc
 	jq	nz, .lbl_1
-	jq	.lbl_13
+	jq	.lbl_12
 .lbl_1:
-	ld	hl, (_device_status)
-	ld	de, 2
-	or	a, a
-	sbc	hl, de
-	jq	z, .lbl_2
-	jq	.lbl_13
-.lbl_2:
 	call	usb_GetCycleCounter
 	ld	(ix + -3), hl
 	ld	(ix + -4), e
-.lbl_3:
-	ld	hl, (_dev_funcs+4)
+.lbl_2:
+	ld	hl, (_dev_funcs)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_5
+	jq	z, .lbl_4
 	ld	de, 0
 	push	de
 	call	_indcallhl
 	pop	hl
-.lbl_5:
+.lbl_4:
 	ld	hl, (_pl_ReadPacket.packet_size)
-	ld	iy, (_dev_funcs+7)
+	ld	iy, (_dev_funcs+3)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, .lbl_6
+	jq	nz, .lbl_5
 	ld	hl, (ix + 6)
 	push	hl
 	ld	hl, 3
@@ -726,12 +542,12 @@ pl_ReadPacket:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	nz, .lbl_10
+	jq	nz, .lbl_9
 	ld	hl, (ix + 6)
 	ld	hl, (hl)
 	ld	(_pl_ReadPacket.packet_size), hl
-	jq	.lbl_10
-.lbl_6:
+	jq	.lbl_9
+.lbl_5:
 	ld	de, (ix + 6)
 	push	de
 	push	hl
@@ -741,8 +557,8 @@ pl_ReadPacket:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	z, .lbl_7
-.lbl_10:
+	jq	z, .lbl_6
+.lbl_9:
 	call	usb_GetCycleCounter
 	ld	bc, (ix + -3)
 	ld	a, (ix + -4)
@@ -751,75 +567,23 @@ pl_ReadPacket:
 	ld	a, (_blocking_read_timeout+3)
 	call	ti._lcmpu
 	ld	a, 1
-	jq	c, .lbl_12
+	jq	c, .lbl_11
 	ld	a, 0
-.lbl_12:
+.lbl_11:
 	bit	0, a
-	jq	nz, .lbl_3
+	jq	nz, .lbl_2
 	xor	a, a
-	jq	.lbl_13
-.lbl_7:
+	jq	.lbl_12
+.lbl_6:
 	or	a, a
 	sbc	hl, hl
 	ld	(_pl_ReadPacket.packet_size), hl
 	ld	a, 1
-.lbl_13:
+.lbl_12:
 	ld	sp, ix
 	pop	ix
 	ret
 
-pl_Shutdown:
-	ld	hl, -7
-	call	ti._frameset
-	or	a, a
-	sbc	hl, hl
-	ld	a, (_dev_funcs)
-	or	a, a
-	jq	nz, .lbl_7
-	ld	hl, (ix + 6)
-	ld	bc, 48000
-	call	ti._imulu
-	ld	(ix + -3), hl
-	call	usb_GetCycleCounter
-	ld	(ix + -6), hl
-	ld	(ix + -7), e
-.lbl_2:
-	ld	hl, (_dev_funcs+4)
-	add	hl, bc
-	or	a, a
-	sbc	hl, bc
-	jq	z, .lbl_4
-	ld	de, 0
-	push	de
-	call	_indcallhl
-	pop	hl
-.lbl_4:
-	ld	hl, (_srl_device+23)
-	ld	de, (_srl_device+26)
-	or	a, a
-	sbc	hl, de
-	jq	z, .lbl_6
-	call	usb_GetCycleCounter
-	ld	bc, (ix + -6)
-	ld	a, (ix + -7)
-	call	ti._lsub
-	ld	bc, (ix + -3)
-	xor	a, a
-	call	ti._lcmpu
-	jq	c, .lbl_2
-.lbl_6:
-	ld	hl, _srl_device
-	push	hl
-	call	srl_Close
-	pop	hl
-	call	usb_Cleanup
-	or	a, a
-	sbc	hl, hl
-.lbl_7:
-	ld	(_device_status), hl
-	ld	sp, ix
-	pop	ix
-	ret
 	
 pl_SetAsyncTimeout:
 	call	ti._frameset0
@@ -848,30 +612,22 @@ pl_SetReadTimeout:
 	pop	ix
 	ret
 	
-_device_status:		rb	3
+	
+_device_type:		rb 	1
+_device:			rb	3
+_buffer_len:		rb	3
+_buffer_half_len:	rb	3
 
-_usb_device:		rb	3
+_blocking_read_timeout:		rb	4
+_async_write_timeout:	dd	2400000
 
 _queue:				rb	3
-
 _queue_max:			rb	3
-
 _queue_filled:		rb	3
 
 _bytes_read:		rb	3
 
-_srl_device:		rb	39
-
-_async_write_timeout:	dd	2400000
-
-_dev_buffer:		rb	3
-
-_dev_buffer_size:	rb	3
-
-_dev_buffer_half_size:	rb	3
-
-_dev_funcs:			rb	13
-
+_dev_funcs:			rb	9
 _pl_ReadPacket.packet_size:		rb	3
 
-_blocking_read_timeout:		rb	4
+

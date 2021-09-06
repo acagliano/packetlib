@@ -3,8 +3,8 @@ var indexSectionsWithContent =
   0: "_dnp",
   1: "n",
   2: "p",
-  3: "_d",
-  4: "np",
+  3: "_",
+  4: "d",
   5: "p"
 };
 

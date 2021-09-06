@@ -81,25 +81,16 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:a9042337dc2546d731f941e3c259d60da"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#a9042337dc2546d731f941e3c259d60da">_device_types</a> { <a class="el" href="netpktce_8h.html#a9042337dc2546d731f941e3c259d60daae7f32779b904eabedda54aaf063ff443">NET_MODE_SERIAL</a>
+<tr class="memitem:a9042337dc2546d731f941e3c259d60da"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#a9042337dc2546d731f941e3c259d60da">_device_types</a> { <b>DEVICE_NONE</b>
+, <a class="el" href="netpktce_8h.html#a9042337dc2546d731f941e3c259d60daab688adfab6d611ae877ccb76b8f86d7a">DEVICE_SERIAL</a>
  }</td></tr>
 <tr class="separator:a9042337dc2546d731f941e3c259d60da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac099822b2180cb992ef85bdae61720c8"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8">device_status_t</a> { <br />
-&#160;&#160;<a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8a9adfe73c7adc0d4f7defd3da30f34efa">PL_NTWK_NONE</a>
-, <a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8aa86fca3d082961b174a85482a3b62759">PL_NTWK_ENABLED</a>
-, <a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8ae54dcb0654290d1e08371b680f39fccc">PL_NTWK_READY</a>
-, <a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8a02a4cf8f0d42ae978eb99224fa75b89a">PL_NTWK_INTERNAL_ERROR</a>
-, <br />
-&#160;&#160;<a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8af5fbbe33b451b7073f57d05ac77d0d4b">PL_NTWK_USER_ERROR</a> = 0xff
-<br />
- }</td></tr>
-<tr class="separator:ac099822b2180cb992ef85bdae61720c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9d27b59cced5b6de52af36019e4085b5"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#a9d27b59cced5b6de52af36019e4085b5">pl_DeviceConnect</a> (uint8_t device, uint8_t *buf, size_t buf_len)</td></tr>
-<tr class="memdesc:a9d27b59cced5b6de52af36019e4085b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the selected subsystem.  <a href="netpktce_8h.html#a9d27b59cced5b6de52af36019e4085b5">More...</a><br /></td></tr>
-<tr class="separator:a9d27b59cced5b6de52af36019e4085b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49f3c0ed09ccd67b4f0345e99ed4471d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#a49f3c0ed09ccd67b4f0345e99ed4471d">pl_SetDevice</a> (uint8_t dev_type, void *dev_ref, size_t buf_len)</td></tr>
+<tr class="memdesc:a49f3c0ed09ccd67b4f0345e99ed4471d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves internally a reference to an initialized networking device for transmission.  <a href="netpktce_8h.html#a49f3c0ed09ccd67b4f0345e99ed4471d">More...</a><br /></td></tr>
+<tr class="separator:a49f3c0ed09ccd67b4f0345e99ed4471d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae58df8f84f50f72a2c62bd452d58a3ab"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab">pl_GetAsyncProcHandler</a> (void)</td></tr>
 <tr class="memdesc:ae58df8f84f50f72a2c62bd452d58a3ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the internal device events handler.  <a href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab">More...</a><br /></td></tr>
 <tr class="separator:ae58df8f84f50f72a2c62bd452d58a3ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -115,12 +106,6 @@ Functions</h2></td></tr>
 <tr class="memitem:a2c78695f43c39502f3e01928acd0571b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b">pl_ReadPacket</a> (uint8_t *dest)</td></tr>
 <tr class="memdesc:a2c78695f43c39502f3e01928acd0571b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a number of bytes from the subsystem.  <a href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b">More...</a><br /></td></tr>
 <tr class="separator:a2c78695f43c39502f3e01928acd0571b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4bd5c7d968399a8027747ba7c47e4bdc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#a4bd5c7d968399a8027747ba7c47e4bdc">pl_Shutdown</a> (size_t timeout)</td></tr>
-<tr class="memdesc:a4bd5c7d968399a8027747ba7c47e4bdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shuts down the connected subsystem.  <a href="netpktce_8h.html#a4bd5c7d968399a8027747ba7c47e4bdc">More...</a><br /></td></tr>
-<tr class="separator:a4bd5c7d968399a8027747ba7c47e4bdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a145eb609880ec5a611b2633b632ab027"><td class="memItemLeft" align="right" valign="top"><a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8">device_status_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#a145eb609880ec5a611b2633b632ab027">pl_GetDeviceStatus</a> (void)</td></tr>
-<tr class="memdesc:a145eb609880ec5a611b2633b632ab027"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the status of the connected device.  <a href="netpktce_8h.html#a145eb609880ec5a611b2633b632ab027">More...</a><br /></td></tr>
-<tr class="separator:a145eb609880ec5a611b2633b632ab027"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8675f6b874c0de4ef902363e22441dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#ad8675f6b874c0de4ef902363e22441dd">pl_SetAsyncTimeout</a> (size_t timeout)</td></tr>
 <tr class="memdesc:ad8675f6b874c0de4ef902363e22441dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the timeout for the Async device process handler.  <a href="netpktce_8h.html#ad8675f6b874c0de4ef902363e22441dd">More...</a><br /></td></tr>
 <tr class="separator:ad8675f6b874c0de4ef902363e22441dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,10 +115,11 @@ Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Defines the implementation of TI-ONP. </p>
-<p>TI-ONPP is an acronym for TI Open Network Protocol. It is a bare-bones open-source protocol for sending packets to a connected host using some networking device.</p>
+<p>TI-ONP is an acronym for TI Open Network Protocol. It is a bare-bones open-source protocol for sending packets to a connected host using some networking device.</p>
 <p>Provides an implementation of a basic packetization standard for the TI-84+ CE. The "standard" is simply:</p><ul>
 <li>3-byte size word indicating frame length (cannot be larger than the max packet size specified during Initialization)</li>
 <li>The data section of arbitrary (but bounded) length.</li>
+<li>* subject to change if more header data is needed</li>
 </ul>
 <dl class="section author"><dt>Author</dt><dd>Anthony <em>ACagliano</em> Cagliano </dd></dl>
 </div><h2 class="groupheader">Enumeration Type Documentation</h2>
@@ -149,56 +135,30 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a9042337dc2546d731f941e3c259d60daae7f32779b904eabedda54aaf063ff443"></a>NET_MODE_SERIAL&#160;</td><td class="fielddoc"><p>specifees the Serial/USB subsystem to be used for networking. </p>
-</td></tr>
-</table>
-
-</div>
-</div>
-<a id="ac099822b2180cb992ef85bdae61720c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac099822b2180cb992ef85bdae61720c8">&#9670;&nbsp;</a></span>device_status_t</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">enum <a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8">device_status_t</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ac099822b2180cb992ef85bdae61720c8a9adfe73c7adc0d4f7defd3da30f34efa"></a>PL_NTWK_NONE&#160;</td><td class="fielddoc"><p>No device. Generally doesn't mean anything bad, just that you haven't initialized. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac099822b2180cb992ef85bdae61720c8aa86fca3d082961b174a85482a3b62759"></a>PL_NTWK_ENABLED&#160;</td><td class="fielddoc"><p>Indicates that the subsystem is initialized, but not ready to send data. If this is the device status after calling <a class="el" href="netpktce_8h.html#a9d27b59cced5b6de52af36019e4085b5" title="Initializes the selected subsystem.">pl_DeviceConnect()</a>, this is an error. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac099822b2180cb992ef85bdae61720c8ae54dcb0654290d1e08371b680f39fccc"></a>PL_NTWK_READY&#160;</td><td class="fielddoc"><p>Indicates that the subsystem is initialized and ready to send data. This is a success code. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac099822b2180cb992ef85bdae61720c8a02a4cf8f0d42ae978eb99224fa75b89a"></a>PL_NTWK_INTERNAL_ERROR&#160;</td><td class="fielddoc"><p>Indicates that something internal prevented the device from working. This is likely a bug in the chosen subsystem code. Report it! </p>
-</td></tr>
-<tr><td class="fieldname"><a id="ac099822b2180cb992ef85bdae61720c8af5fbbe33b451b7073f57d05ac77d0d4b"></a>PL_NTWK_USER_ERROR&#160;</td><td class="fielddoc"><p>Sorry, pal. This one is on you. You probably supplied an invalid argument somewhere. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a9042337dc2546d731f941e3c259d60daab688adfab6d611ae877ccb76b8f86d7a"></a>DEVICE_SERIAL&#160;</td><td class="fielddoc"><p>specifees the Serial/USB subsystem to be used for networking. </p>
 </td></tr>
 </table>
 
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a9d27b59cced5b6de52af36019e4085b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9d27b59cced5b6de52af36019e4085b5">&#9670;&nbsp;</a></span>pl_DeviceConnect()</h2>
+<a id="a49f3c0ed09ccd67b4f0345e99ed4471d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49f3c0ed09ccd67b4f0345e99ed4471d">&#9670;&nbsp;</a></span>pl_SetDevice()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool pl_DeviceConnect </td>
+          <td class="memname">bool pl_SetDevice </td>
           <td>(</td>
           <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
+          <td class="paramname"><em>dev_type</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>buf</em>, </td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>dev_ref</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -214,15 +174,24 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Initializes the selected subsystem. </p>
+<p>Saves internally a reference to an initialized networking device for transmission. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Specifies the subsystem to set up. Use the values from <b>enum</b> <b>_device_types</b>. </td></tr>
-    <tr><td class="paramname">buf</td><td>Pointer to a buffer to use for the subsystem internally. </td></tr>
-    <tr><td class="paramname">buf_len</td><td>Size of the pointed buffer <b>buf</b>. </td></tr>
+    <tr><td class="paramname">device</td><td>Specifies the type of device to use. Use the values from <b>enum</b> <b>_device_types</b>. </td></tr>
+    <tr><td class="paramname">buf</td><td>Pointer to the device reference structure. (Ex: <em>srl_device_t*</em> for serial) </td></tr>
+    <tr><td class="paramname">buf_len</td><td>Size of the internal buffer reserved for the specified device (Ex: for serial, the total size of the serial buffer). </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>Here is an example of code, showing what the arguments mean: <div class="fragment"><div class="line"><span class="comment">// usb init stuff</span></div>
+<div class="line">srl_device_t srl_dev;</div>
+<div class="line">uint8_t srl[4096];</div>
+<div class="line"><span class="keywordflow">if</span>( srl_Open(&amp;srl_dev, usb_dev, srl, 4096, SRL_INTERFACE_ANY, 9600 ) <span class="keywordflow">return</span> 0;</div>
+<div class="line"><span class="keywordflow">if</span>( !<a class="code" href="netpktce_8h.html#a49f3c0ed09ccd67b4f0345e99ed4471d">pl_SetDevice</a>(<a class="code" href="netpktce_8h.html#a9042337dc2546d731f941e3c259d60daab688adfab6d611ae877ccb76b8f86d7a">DEVICE_SERIAL</a>, &amp;srl_dev, 4096) ) <span class="keywordflow">return</span> 0;</div>
+<div class="line"><span class="comment">// continue with the packet lib</span></div>
+<div class="ttc" id="anetpktce_8h_html_a49f3c0ed09ccd67b4f0345e99ed4471d"><div class="ttname"><a href="netpktce_8h.html#a49f3c0ed09ccd67b4f0345e99ed4471d">pl_SetDevice</a></div><div class="ttdeci">bool pl_SetDevice(uint8_t dev_type, void *dev_ref, size_t buf_len)</div><div class="ttdoc">Saves internally a reference to an initialized networking device for transmission.</div></div>
+<div class="ttc" id="anetpktce_8h_html_a9042337dc2546d731f941e3c259d60daab688adfab6d611ae877ccb76b8f86d7a"><div class="ttname"><a href="netpktce_8h.html#a9042337dc2546d731f941e3c259d60daab688adfab6d611ae877ccb76b8f86d7a">DEVICE_SERIAL</a></div><div class="ttdeci">@ DEVICE_SERIAL</div><div class="ttdef"><b>Definition:</b> netpktce.h:31</div></div>
+</div><!-- fragment --> </dd></dl>
 
 </div>
 </div>
@@ -243,8 +212,8 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns a pointer to the internal device events handler. </p>
-<p>Due to lack of interrupt support on the TI-84+ CE, in some cases you may be required to call an event handler stub in a tick-loop. In this case, return a function pointer like so: </p><div class="fragment"><div class="line">void (*handler)(<span class="keywordtype">bool</span> block) = <a class="code" href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab">pl_GetAsyncProcHandler</a>();</div>
-<div class="line">handler(<span class="keyword">true</span>|<span class="keyword">false</span>)</div>
+<p>Due to lack of interrupt support on the TI-84+ CE, in some cases you may be required to call an event handler stub in a tick-loop. In this case, return and use a function pointer like so. Note that because the handler may sometimes be NULL (no handler) you should check if the hander is not NULL before trying to call it. </p><div class="fragment"><div class="line">void (*handler)(<span class="keywordtype">bool</span> block) = <a class="code" href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab">pl_GetAsyncProcHandler</a>();</div>
+<div class="line"><span class="keywordflow">if</span>(hander) handler(<span class="keyword">true</span>|<span class="keyword">false</span>)</div>
 <div class="ttc" id="anetpktce_8h_html_ae58df8f84f50f72a2c62bd452d58a3ab"><div class="ttname"><a href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab">pl_GetAsyncProcHandler</a></div><div class="ttdeci">void * pl_GetAsyncProcHandler(void)</div><div class="ttdoc">Returns a pointer to the internal device events handler.</div></div>
 </div><!-- fragment --> <dl class="section note"><dt>Note</dt><dd>The handler parameter specifies if the call to the async process handler should be blocking or non-blocking. Non-blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms). </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the internal asyncronous subsystem event handler that can be run in blocking or non-blocking mode. For USB/Serial, a pointer a function that loops usb_HandleEvents() (either once or for a timeout). </dd></dl>
@@ -286,7 +255,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>Assert <b>queue_len</b> &gt;= (( <b>buf_len</b> / 2 ) - 3). </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="netpktce_8h.html#a9d27b59cced5b6de52af36019e4085b5" title="Initializes the selected subsystem.">pl_DeviceConnect()</a>. </dd></dl>
+<dl class="section see"><dt>See also</dt><dd>pl_DeviceConnect(). </dd></dl>
 
 </div>
 </div>
@@ -395,54 +364,6 @@ Functions</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>This function defaults to a non-blocking read, meaning it checks if there is a full packet available in the receive buffer and then immediately returns to the caller. You may set this to a blocking read by using the <a class="el" href="netpktce_8h.html#a3eee61cca8169f57e0f216e562012aa6" title="Sets the timeout for reading a packet.">pl_SetReadTimeout()</a> function. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>True if a packet is available. False if not. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Because the header contains a size word, there is no need to pass a read size. The protocol will alternate between attempting to read a <b>size_t</b> (3 bytes) and attempting to read that size.. </dd></dl>
-
-</div>
-</div>
-<a id="a4bd5c7d968399a8027747ba7c47e4bdc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4bd5c7d968399a8027747ba7c47e4bdc">&#9670;&nbsp;</a></span>pl_Shutdown()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void pl_Shutdown </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>timeout</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Shuts down the connected subsystem. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">timeout</td><td>Time, in milliseconds to wait, to let and processing device events complete, after which the device will be closed. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a145eb609880ec5a611b2633b632ab027"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a145eb609880ec5a611b2633b632ab027">&#9670;&nbsp;</a></span>pl_GetDeviceStatus()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8">device_status_t</a> pl_GetDeviceStatus </td>
-          <td>(</td>
-          <td class="paramtype">void&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Returns the status of the connected device. </p>
-<dl class="section return"><dt>Returns</dt><dd>The status of the device. </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="netpktce_8h.html#ac099822b2180cb992ef85bdae61720c8">device_status_t</a>. </dd></dl>
 
 </div>
 </div>

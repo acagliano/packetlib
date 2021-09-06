@@ -9,13 +9,14 @@
  *	@file netpktce.h
  *	@brief Defines the implementation of TI-ONP
  *
- *	TI-ONPP is an acronym for TI Open Network Protocol.
+ *	TI-ONP is an acronym for TI Open Network Protocol.
  *	It is a bare-bones open-source protocol for sending packets to a connected host using some networking device.
  *
  *	Provides an implementation of a basic packetization standard for the TI-84+ CE.
  *	The "standard" is simply:
  *		- 3-byte size word indicating frame length (cannot be larger than the max packet size specified during Initialization)
  *		- The data section of arbitrary (but bounded) length.
+ *		- * subject to change if more header data is needed
  *
  *	@author Anthony @e ACagliano Cagliano
  **********************************************************************************************************************************************/
@@ -26,43 +27,39 @@
  * Specifies the subsystem (device) to enable for networking. As of now, only options are @b NET_MODE_SERIAL.
  **************************************************************************************************************************************/
 enum _device_types {
-    NET_MODE_SERIAL,		/**< specifees the Serial/USB subsystem to be used for networking. */
+	DEVICE_NONE,
+    DEVICE_SERIAL,		/**< specifees the Serial/USB subsystem to be used for networking. */
 };
 
-/************************************************************************************************
- * @enum Packetlib error codes
- *
- * Error codes indicating if the subsystem initialized properly or if an error occurred.
- *************************************************************************************************/
-typedef enum {
-	PL_NTWK_NONE,				/**< No device. Generally doesn't mean anything bad, just that you haven't initialized. */
-	PL_NTWK_ENABLED,			/**< Indicates that the subsystem is initialized, but not ready to send data.
-									If this is the device status after calling pl_DeviceConnect(), this is an error. */
-	PL_NTWK_READY,				/**< Indicates that the subsystem is initialized and ready to send data.
-									This is a success code. */
-	PL_NTWK_INTERNAL_ERROR,		/**< Indicates that something internal prevented the device from working.
-									This is likely a bug in the chosen subsystem code. Report it! */
-	PL_NTWK_USER_ERROR = 0xff	/**< Sorry, pal. This one is on you. You probably supplied an invalid argument somewhere. */
-} device_status_t;
-
-
 /***************************************************************************************************************************
- * @brief Initializes the selected subsystem.
+ * @brief Saves internally a reference to an initialized networking device for transmission.
  *
- * @param device Specifies the subsystem to set up. Use the values from @b enum @b _device_types.
- * @param buf Pointer to a buffer to use for the subsystem internally.
- * @param buf_len Size of the pointed buffer @b buf.
+ * @param device Specifies the type of device to use. Use the values from @b enum @b _device_types.
+ * @param buf Pointer to the device reference structure. (Ex: @e srl_device_t* for serial)
+ * @param buf_len Size of the internal buffer reserved for the specified device
+ * 		(Ex: for serial, the total size of the serial buffer).
+ * @note Here is an example of code, showing what the arguments mean:
+ * 	@code
+ * 	// usb init stuff
+ * 	srl_device_t srl_dev;
+ * 	uint8_t srl[4096];
+ * 	if( srl_Open(&srl_dev, usb_dev, srl, 4096, SRL_INTERFACE_ANY, 9600 ) return 0;
+ * 	if( !pl_SetDevice(DEVICE_SERIAL, &srl_dev, 4096) ) return 0;
+ * 	// continue with the packet lib
+ * 	@endcode
  ***************************************************************************************************************************/
-bool pl_DeviceConnect(uint8_t device, uint8_t *buf, size_t buf_len);
+bool pl_SetDevice(uint8_t dev_type, void *dev_ref, size_t buf_len);
 
 /***************************************************************************************************************************************
  * @brief Returns a pointer to the internal device events handler.
  *
  * Due to lack of interrupt support on the TI-84+ CE, in some cases you may be required to call an
- * event handler stub in a tick-loop. In this case, return a function pointer like so:
+ * event handler stub in a tick-loop. In this case, return and use a function pointer like so. Note that because
+ * the handler may sometimes be NULL (no handler) you should check if the hander is not NULL
+ * before trying to call it.
  * @code
  * void (*handler)(bool block) = pl_GetAsyncProcHandler();
- * handler(true|false)
+ * if(hander) handler(true|false)
  * @endcode
  * @note The handler parameter specifies if the call to the async process handler should be blocking or non-blocking.
  * 		Non-blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms).
@@ -119,19 +116,6 @@ size_t pl_SendPacket(uint8_t *data, size_t len);
  * 		attempting to read that size..
  */
 bool pl_ReadPacket(uint8_t *dest);
-
-/**
- * @brief Shuts down the connected subsystem.
- *
- * @param timeout Time, in milliseconds to wait, to let and processing device events complete, after which the device will be closed.
- */
-void pl_Shutdown(size_t timeout);
-
-/**
- * @brief Returns the status of the connected device.
- * @returns The status of the device. @see device_status_t.
- */
-device_status_t pl_GetDeviceStatus(void);
 
 /**
  * @brief Sets the timeout for the Async device process handler.
