@@ -243,6 +243,8 @@ Sets the timeout for the Async device process handler.
 
 \begin{DoxyNote}{Note}
 The async handler is invoked once when \mbox{\hyperlink{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}{pl\+\_\+\+Send\+Packet()}} is called. It can also be invoked by the user after returning \mbox{\hyperlink{netpktce_8h_ae58df8f84f50f72a2c62bd452d58a3ab}{pl\+\_\+\+Get\+Async\+Proc\+Handler()}}. 
+
+Async timeout defaults to 50ms but can be altered by the user via this function. 
 \end{DoxyNote}
 
 \begin{DoxyParams}{Parameters}
@@ -260,7 +262,7 @@ The async handler is invoked once when \mbox{\hyperlink{netpktce_8h_a4938b78991b
 Sets the timeout for reading a packet. 
 
 \begin{DoxyNote}{Note}
-The async handler is invoked once when \mbox{\hyperlink{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}{pl\+\_\+\+Send\+Packet()}} is called. It can also be invoked by the user after returning \mbox{\hyperlink{netpktce_8h_ae58df8f84f50f72a2c62bd452d58a3ab}{pl\+\_\+\+Get\+Async\+Proc\+Handler()}}. 
+The packet read timeout defaults to 0, or non-\/blocking, but can be altered by the user via this function. 
 \end{DoxyNote}
 
 \begin{DoxyParams}{Parameters}

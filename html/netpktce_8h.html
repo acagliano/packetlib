@@ -392,7 +392,9 @@ Like the send function, the read function can also support packet overflow, but 
 </div><div class="memdoc">
 
 <p>Sets the timeout for the Async device process handler. </p>
-<dl class="section note"><dt>Note</dt><dd>The async handler is invoked once when <a class="el" href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4" title="Sends a packet or sends the the contents of the send queue.">pl_SendPacket()</a> is called. It can also be invoked by the user after returning <a class="el" href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab" title="Returns a pointer to the internal device events handler.">pl_GetAsyncProcHandler()</a>. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The async handler is invoked once when <a class="el" href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4" title="Sends a packet or sends the the contents of the send queue.">pl_SendPacket()</a> is called. It can also be invoked by the user after returning <a class="el" href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab" title="Returns a pointer to the internal device events handler.">pl_GetAsyncProcHandler()</a>. </dd>
+<dd>
+Async timeout defaults to 50ms but can be altered by the user via this function. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">timeout</td><td>The timeout to set, in milliseconds. Pass 0 to set non-blocking. </td></tr>
@@ -419,7 +421,7 @@ Like the send function, the read function can also support packet overflow, but 
 </div><div class="memdoc">
 
 <p>Sets the timeout for reading a packet. </p>
-<dl class="section note"><dt>Note</dt><dd>The async handler is invoked once when <a class="el" href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4" title="Sends a packet or sends the the contents of the send queue.">pl_SendPacket()</a> is called. It can also be invoked by the user after returning <a class="el" href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab" title="Returns a pointer to the internal device events handler.">pl_GetAsyncProcHandler()</a>. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>The packet read timeout defaults to 0, or non-blocking, but can be altered by the user via this function. </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">timeout</td><td>The timeout to set, in milliseconds. Pass 0 to set non-blocking. </td></tr>
