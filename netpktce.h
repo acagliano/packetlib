@@ -63,7 +63,7 @@ bool pl_SetDevice(uint8_t dev_type, void *dev_ref, size_t buf_len);
  * @endcode
  * @note The handler parameter specifies if the call to the async process handler should be blocking or non-blocking.
  * 		Non-blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms).
- * @note This library will call the handler function in its own at some points, namely during pl_SendPacket() and
+ * @note This library will call the handler function on its own at some points, namely during pl_SendPacket() and
  * 		pl_ReadPacket(). If you have no need for consistent device processing, you can probably rely on the library's
  * 		calling of it; however if you are coding a more dynamic networking application that exchanges large quantities
  * 		of data, it may be helpful to tick it yourself, even if it may not be needed, simply to ensure that you are
