@@ -179,8 +179,8 @@ Functions</h2></td></tr>
 <p>Saves internally a reference to an initialized networking device for transmission. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Specifies the type of device to use. Use the values from <b>enum</b> <b>_device_types</b>. </td></tr>
-    <tr><td class="paramname">buf</td><td>Pointer to the device reference structure. (Ex: <em>srl_device_t*</em> for serial) </td></tr>
+    <tr><td class="paramname">dev_type</td><td>Specifies the type of device to use. Use the values from <b>enum</b> <b>_device_types</b>. </td></tr>
+    <tr><td class="paramname">dev_ref</td><td>Pointer to the device reference structure. (Ex: <em>srl_device_t*</em> for serial) </td></tr>
     <tr><td class="paramname">buf_len</td><td>Size of the internal buffer reserved for the specified device (Ex: for serial, the total size of the serial buffer). </td></tr>
   </table>
   </dd>
