@@ -11,7 +11,7 @@ Defines the implementation of TI-\/\+ONP.
 \doxysubsection*{Enumerations}
 \begin{DoxyCompactItemize}
 \item 
-enum \mbox{\hyperlink{netpktce_8h_a9042337dc2546d731f941e3c259d60da}{\+\_\+device\+\_\+types}} \{ {\bfseries DEVICE\+\_\+\+NONE}
+enum \mbox{\hyperlink{netpktce_8h_a9042337dc2546d731f941e3c259d60da}{\+\_\+device\+\_\+types}} \{ \mbox{\hyperlink{netpktce_8h_a9042337dc2546d731f941e3c259d60daa50c30a23dea6c506c49b17b601ae2c4e}{DEVICE\+\_\+\+NONE}}
 , \mbox{\hyperlink{netpktce_8h_a9042337dc2546d731f941e3c259d60daab688adfab6d611ae877ccb76b8f86d7a}{DEVICE\+\_\+\+SERIAL}}
  \}
 \end{DoxyCompactItemize}
@@ -61,6 +61,10 @@ Anthony {\itshape ACagliano} Cagliano
 {\footnotesize\ttfamily enum \mbox{\hyperlink{netpktce_8h_a9042337dc2546d731f941e3c259d60da}{\+\_\+device\+\_\+types}}}
 
 \begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{DEVICE\_NONE@{DEVICE\_NONE}!netpktce.h@{netpktce.h}}\index{netpktce.h@{netpktce.h}!DEVICE\_NONE@{DEVICE\_NONE}}}\mbox{\Hypertarget{netpktce_8h_a9042337dc2546d731f941e3c259d60daa50c30a23dea6c506c49b17b601ae2c4e}\label{netpktce_8h_a9042337dc2546d731f941e3c259d60daa50c30a23dea6c506c49b17b601ae2c4e}} 
+DEVICE\+\_\+\+NONE&indicates that no device is set. This is a default state. \\
+\hline
+
 \raisebox{\heightof{T}}[0pt][0pt]{\index{DEVICE\_SERIAL@{DEVICE\_SERIAL}!netpktce.h@{netpktce.h}}\index{netpktce.h@{netpktce.h}!DEVICE\_SERIAL@{DEVICE\_SERIAL}}}\mbox{\Hypertarget{netpktce_8h_a9042337dc2546d731f941e3c259d60daab688adfab6d611ae877ccb76b8f86d7a}\label{netpktce_8h_a9042337dc2546d731f941e3c259d60daab688adfab6d611ae877ccb76b8f86d7a}} 
 DEVICE\+\_\+\+SERIAL&specifees the Serial/\+USB subsystem to be used for networking. \\
 \hline
@@ -114,7 +118,7 @@ Returns a pointer to the internal device events handler.
 Due to lack of interrupt support on the TI-\/84+ CE, in some cases you may be required to call an event handler stub in a tick-\/loop. In this case, return and use a function pointer like so. Note that because the handler may sometimes be NULL (no handler) you should check if the hander is not NULL before trying to call it. 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{void (*handler)(\textcolor{keywordtype}{bool} block) = \mbox{\hyperlink{netpktce_8h_ae58df8f84f50f72a2c62bd452d58a3ab}{pl\_GetAsyncProcHandler}}();}
-\DoxyCodeLine{\textcolor{keywordflow}{if}(hander) handler(\textcolor{keyword}{true}|\textcolor{keyword}{false})}
+\DoxyCodeLine{\textcolor{keywordflow}{if}(handler) handler(\textcolor{keyword}{true}|\textcolor{keyword}{false})}
 
 \end{DoxyCode}
  \begin{DoxyNote}{Note}
@@ -184,6 +188,8 @@ The queue is used to contruct a single packet, not to queue multiple packets. Wh
 
 Sends a packet or sends the the contents of the send queue. 
 
+Attempts to send data via the whatever device is passed in \mbox{\hyperlink{netpktce_8h_a49f3c0ed09ccd67b4f0345e99ed4471d}{pl\+\_\+\+Set\+Device()}}. Determines the maximum packet size, and breaks the input into multiple frames. Each \char`\"{}frame\char`\"{} starts a blocking asyncronous event handler with a timeout of 50ms, giving the device time to clear out any backlog in the send buffer. After this timeout, a 3-\/byte size word, followed by the frame data is written to the output buffer.
+
 
 \begin{DoxyParams}{Parameters}
 {\em data} & Pointer to the buffer containing the packet to send. Alternatively, {\bfseries{NULL}} to send the queue. \\
@@ -192,8 +198,11 @@ Sends a packet or sends the the contents of the send queue.
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-The length of the packet sent. May not equal {\bfseries{len}} if {\bfseries{len}} is greater than the send buffer length. 
+The length of the packet sent. Will loop sending multiple packet frames until the passed buffer or queue is fully sent or an error occurs. 
 \end{DoxyReturn}
+\begin{DoxyNote}{Note}
+If at any point a frame reports that the number of bytes sent does not match what is expected, an error, namely buffer limit, is assumed to have occured. The packet send loop immediately breaks, returning the size that was successfully sent. It is up to the user if it is important to them to check for this error condition or if it can simply be ignored. 
+\end{DoxyNote}
 \mbox{\Hypertarget{netpktce_8h_a2c78695f43c39502f3e01928acd0571b}\label{netpktce_8h_a2c78695f43c39502f3e01928acd0571b}} 
 \index{netpktce.h@{netpktce.h}!pl\_ReadPacket@{pl\_ReadPacket}}
 \index{pl\_ReadPacket@{pl\_ReadPacket}!netpktce.h@{netpktce.h}}
@@ -216,7 +225,7 @@ This function defaults to a non-\/blocking read, meaning it checks if there is a
 True if a packet is available. False if not. 
 \end{DoxyReturn}
 \begin{DoxyNote}{Note}
-Because the header contains a size word, there is no need to pass a read size. The protocol will alternate between attempting to read a {\bfseries{size\+\_\+t}} (3 bytes) and attempting to read that size.. 
+Because the header contains a size word, there is no need to pass a read size. The protocol will alternate between attempting to read a {\bfseries{size\+\_\+t}} (3 bytes) and attempting to read the length the last size\+\_\+t indicated. 
 \end{DoxyNote}
 \mbox{\Hypertarget{netpktce_8h_ad8675f6b874c0de4ef902363e22441dd}\label{netpktce_8h_ad8675f6b874c0de4ef902363e22441dd}} 
 \index{netpktce.h@{netpktce.h}!pl\_SetAsyncTimeout@{pl\_SetAsyncTimeout}}

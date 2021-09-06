@@ -397,59 +397,76 @@ pl_QueueSendPacketSegment:
 	ret
 
 pl_SendPacket:
-	ld	hl, -12
+	ld	hl, -15
 	call	ti._frameset
 	ld	hl, (ix + 6)
-	ld	bc, 0
-	ld	(ix + -6), hl
+	ld	iy, 0
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_1
+	jq	z, .lbl_2
 	ld	a, 0
 	jq	.lbl_3
-.lbl_1:
+.lbl_2:
 	ld	a, 1
 .lbl_3:
+	ld	bc, (_queue)
 	bit	0, a
-	jq	nz, .lbl_4
-	jq	.lbl_6
-.lbl_4:
-	ld	hl, (_queue)
+	ld	(ix + -6), bc
+	jq	nz, .lbl_5
 	ld	(ix + -6), hl
-.lbl_6:
-	ld	de, (ix + 9)
+.lbl_5:
+	ld	hl, (ix + 9)
 	bit	0, a
 	jq	nz, .lbl_7
-	ld	(ix + -12), de
-	jq	.lbl_9
+	ld	(ix + -9), hl
+	jq	.lbl_8
 .lbl_7:
-	ld	hl, (_queue_filled)
-	ld	(ix + -12), hl
-.lbl_9:
-	ld	hl, (_dev_funcs)
+	ld	de, (_queue_filled)
+	ld	(ix + -9), de
+.lbl_8:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_11
-	ld	de, 1
-	push	de
-	call	_indcallhl
-	ld	de, (ix + 9)
-	ld	bc, 0
-	pop	hl
+	jq	z, .lbl_10
+	ld	l, 0
+	jq	.lbl_11
+.lbl_10:
+	ld	l, 1
 .lbl_11:
-.lbl_12:
+	or	a, l
+	ld	l, a
+	ld	a, (_device_type)
+	ld	e, a
+	ld	h, 1
+	ld	a, l
+	xor	a, h
+	bit	0, a
+	jq	nz, .lbl_14
+	ld	hl, (ix + -6)
+	or	a, a
+	sbc	hl, bc
+	jq	nz, .lbl_13
+.lbl_14:
+	ld	a, e
+	or	a, a
+	jq	nz, .lbl_16
+.lbl_13:
+	lea	bc, iy + 0
+	jq	.lbl_27
+.lbl_16:
+	lea	bc, iy + 0
+.lbl_17:
 	push	bc
 	pop	hl
+	ld	de, (ix + 9)
 	or	a, a
 	sbc	hl, de
-	jq	nc, .lbl_16
+	jq	nc, .lbl_24
 	ld	iy, (_buffer_half_len)
 	ld	de, -3
 	add	iy, de
-	ld	hl, (ix + -12)
-	ld	(ix + -9), bc
+	ld	hl, (ix + -9)
 	or	a, a
 	sbc	hl, bc
 	push	hl
@@ -457,44 +474,67 @@ pl_SendPacket:
 	lea	hl, iy + 0
 	or	a, a
 	sbc	hl, de
-	jq	c, .lbl_15
+	jq	c, .lbl_20
 	push	de
 	pop	iy
-.lbl_15:
+.lbl_20:
+	ld	(ix + -12), bc
 	ld	(ix + -3), iy
+	ld	hl, (_dev_funcs)
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, .lbl_22
+	ld	de, 1
+	push	de
+	call	_indcallhl
+	pop	hl
+.lbl_22:
 	ld	hl, (_dev_funcs+6)
 	ld	de, 3
 	push	de
 	pea	ix + -3
 	call	_indcallhl
+	ld	(ix + -15), hl
 	pop	hl
 	pop	hl
-	ld	hl, (_dev_funcs+6)
+	ld	iy, (_dev_funcs+6)
+	ld	hl, (ix + -6)
+	ld	de, (ix + -12)
+	add	hl, de
 	ld	de, (ix + -3)
 	push	de
-	ld	de, (ix + -6)
-	push	de
-	call	_indcallhl
-	pop	hl
-	pop	hl
-	ld	hl, (ix + -3)
-	ld	de, (ix + -9)
-	add	hl, de
 	push	hl
-	pop	bc
-	ld	de, (ix + 9)
-	jq	.lbl_12
-.lbl_16:
+	call	_indcall
+	pop	de
+	pop	de
+	ld	de, (ix + -15)
+	add	hl, de
+	ld	(ix + -15), hl
+	ld	hl, (ix + -3)
+	push	hl
+	pop	iy
+	ld	de, (ix + -12)
+	add	iy, de
+	ld	de, 3
+	add	hl, de
+	ex	de, hl
+	ld	hl, (ix + -15)
+	or	a, a
+	sbc	hl, de
+	lea	bc, iy + 0
+	jq	z, .lbl_17
+.lbl_24:
 	ld	de, (_queue)
 	ld	hl, (ix + -6)
 	or	a, a
 	sbc	hl, de
-	jq	nz, .lbl_18
+	jq	nz, .lbl_27
 	ld	hl, (_queue_filled)
 	or	a, a
 	sbc	hl, bc
 	ld	(_queue_filled), hl
-.lbl_18:
+.lbl_27:
 	push	bc
 	pop	hl
 	ld	sp, ix
@@ -505,33 +545,41 @@ pl_ReadPacket:
 	ld	hl, -4
 	call	ti._frameset
 	ld	hl, (ix + 6)
-	xor	a, a
+	ld	e, 0
+	ld	a, (_device_type)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, .lbl_1
-	jq	.lbl_12
+	jq	z, .lbl_1
+	or	a, a
+	jq	nz, .lbl_4
 .lbl_1:
+	ld	a, e
+.lbl_16:
+	ld	sp, ix
+	pop	ix
+	ret
+.lbl_4:
 	call	usb_GetCycleCounter
 	ld	(ix + -3), hl
 	ld	(ix + -4), e
-.lbl_2:
+.lbl_5:
 	ld	hl, (_dev_funcs)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_4
+	jq	z, .lbl_7
 	ld	de, 0
 	push	de
 	call	_indcallhl
 	pop	hl
-.lbl_4:
+.lbl_7:
 	ld	hl, (_pl_ReadPacket.packet_size)
 	ld	iy, (_dev_funcs+3)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, .lbl_5
+	jq	nz, .lbl_10
 	ld	hl, (ix + 6)
 	push	hl
 	ld	hl, 3
@@ -542,12 +590,12 @@ pl_ReadPacket:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	nz, .lbl_9
+	jq	nz, .lbl_11
 	ld	hl, (ix + 6)
 	ld	hl, (hl)
 	ld	(_pl_ReadPacket.packet_size), hl
-	jq	.lbl_9
-.lbl_5:
+	jq	.lbl_11
+.lbl_10:
 	ld	de, (ix + 6)
 	push	de
 	push	hl
@@ -557,8 +605,8 @@ pl_ReadPacket:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	z, .lbl_6
-.lbl_9:
+	jq	z, .lbl_15
+.lbl_11:
 	call	usb_GetCycleCounter
 	ld	bc, (ix + -3)
 	ld	a, (ix + -4)
@@ -567,22 +615,19 @@ pl_ReadPacket:
 	ld	a, (_blocking_read_timeout+3)
 	call	ti._lcmpu
 	ld	a, 1
-	jq	c, .lbl_11
+	jq	c, .lbl_13
 	ld	a, 0
-.lbl_11:
+.lbl_13:
 	bit	0, a
-	jq	nz, .lbl_2
+	jq	nz, .lbl_5
 	xor	a, a
-	jq	.lbl_12
-.lbl_6:
+	jq	.lbl_16
+.lbl_15:
 	or	a, a
 	sbc	hl, hl
 	ld	(_pl_ReadPacket.packet_size), hl
 	ld	a, 1
-.lbl_12:
-	ld	sp, ix
-	pop	ix
-	ret
+	jq	.lbl_16
 
 	
 pl_SetAsyncTimeout:
