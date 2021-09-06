@@ -142,14 +142,15 @@ bool pl_ReadPacket(uint8_t *dest);
  * @brief Sets the timeout for the Async device process handler.
  * @note The async handler is invoked once when pl_SendPacket() is called.
  * 		It can also be invoked by the user after returning pl_GetAsyncProcHandler().
+ * @note Async timeout defaults to 50ms but can be altered by the user via this function.
  * @param timeout The timeout to set, in milliseconds. Pass 0 to set non-blocking.
  *****************************************************************************************************/
 void pl_SetAsyncTimeout(size_t timeout);
 
 /****************************************************************************************************
  * @brief Sets the timeout for reading a packet.
- * @note The async handler is invoked once when pl_SendPacket() is called.
- * 		It can also be invoked by the user after returning pl_GetAsyncProcHandler().
+ * @note The packet read timeout defaults to 0, or non-blocking, but can be altered by
+ * 		the user via this function.
  * @param timeout The timeout to set, in milliseconds. Pass 0 to set non-blocking.
  ****************************************************************************************************/
 void pl_SetReadTimeout(size_t timeout);
