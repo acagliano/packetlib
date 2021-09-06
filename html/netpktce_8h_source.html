@@ -90,17 +90,22 @@ $(function() {
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
 <div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="netpktce_8h.html#a17665c1c86d5ee8e5c1b9aa60319e6c8">   83</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="netpktce_8h.html#a17665c1c86d5ee8e5c1b9aa60319e6c8">pl_InitSendQueue</a>(uint8_t *queue_buf, <span class="keywordtype">size_t</span> queue_len);</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
 <div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="netpktce_8h.html#add53d8afeafa25f9094a809a4bbf12f2">   99</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="netpktce_8h.html#add53d8afeafa25f9094a809a4bbf12f2">pl_QueueSendPacketSegment</a>(uint8_t *data, <span class="keywordtype">size_t</span> len);</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
 <div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4">  119</a></span>&#160;<span class="keywordtype">size_t</span> <a class="code" href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4">pl_SendPacket</a>(uint8_t *data, <span class="keywordtype">size_t</span> len);</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160; </div>
-<div class="line"><a name="l00134"></a><span class="lineno"><a class="line" href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b">  134</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b">pl_ReadPacket</a>(uint8_t *dest);</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00142"></a><span class="lineno"><a class="line" href="netpktce_8h.html#ad8675f6b874c0de4ef902363e22441dd">  142</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="netpktce_8h.html#ad8675f6b874c0de4ef902363e22441dd">pl_SetAsyncTimeout</a>(<span class="keywordtype">size_t</span> timeout);</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
-<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="netpktce_8h.html#a3eee61cca8169f57e0f216e562012aa6">  150</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="netpktce_8h.html#a3eee61cca8169f57e0f216e562012aa6">pl_SetReadTimeout</a>(<span class="keywordtype">size_t</span> timeout);</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00139"></a><span class="lineno"><a class="line" href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b">  139</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b">pl_ReadPacket</a>(uint8_t *dest);</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno"><a class="line" href="netpktce_8h.html#ad8675f6b874c0de4ef902363e22441dd">  147</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="netpktce_8h.html#ad8675f6b874c0de4ef902363e22441dd">pl_SetAsyncTimeout</a>(<span class="keywordtype">size_t</span> timeout);</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
+<div class="line"><a name="l00155"></a><span class="lineno"><a class="line" href="netpktce_8h.html#a3eee61cca8169f57e0f216e562012aa6">  155</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="netpktce_8h.html#a3eee61cca8169f57e0f216e562012aa6">pl_SetReadTimeout</a>(<span class="keywordtype">size_t</span> timeout);</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anetpktce_8h_html_a17665c1c86d5ee8e5c1b9aa60319e6c8"><div class="ttname"><a href="netpktce_8h.html#a17665c1c86d5ee8e5c1b9aa60319e6c8">pl_InitSendQueue</a></div><div class="ttdeci">bool pl_InitSendQueue(uint8_t *queue_buf, size_t queue_len)</div><div class="ttdoc">Initializes an optional send queue for outgoing messages.</div></div>
 <div class="ttc" id="anetpktce_8h_html_a2c78695f43c39502f3e01928acd0571b"><div class="ttname"><a href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b">pl_ReadPacket</a></div><div class="ttdeci">bool pl_ReadPacket(uint8_t *dest)</div><div class="ttdoc">Reads a number of bytes from the subsystem.</div></div>
 <div class="ttc" id="anetpktce_8h_html_a3eee61cca8169f57e0f216e562012aa6"><div class="ttname"><a href="netpktce_8h.html#a3eee61cca8169f57e0f216e562012aa6">pl_SetReadTimeout</a></div><div class="ttdeci">void pl_SetReadTimeout(size_t timeout)</div><div class="ttdoc">Sets the timeout for reading a packet.</div></div>

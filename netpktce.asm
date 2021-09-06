@@ -542,7 +542,7 @@ pl_SendPacket:
 	ret
 
 pl_ReadPacket:
-	ld	hl, -4
+	ld	hl, -7
 	call	ti._frameset
 	ld	hl, (ix + 6)
 	ld	e, 0
@@ -550,63 +550,82 @@ pl_ReadPacket:
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_1
-	or	a, a
-	jq	nz, .lbl_4
+	jq	nz, .lbl_1
+	jq	.lbl_15
 .lbl_1:
-	ld	a, e
-.lbl_16:
-	ld	sp, ix
-	pop	ix
-	ret
-.lbl_4:
+	or	a, a
+	jq	nz, .lbl_2
+	jq	.lbl_15
+.lbl_2:
 	call	usb_GetCycleCounter
 	ld	(ix + -3), hl
 	ld	(ix + -4), e
-.lbl_5:
+.lbl_3:
 	ld	hl, (_dev_funcs)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_7
+	jq	z, .lbl_5
 	ld	de, 0
 	push	de
 	call	_indcallhl
 	pop	hl
-.lbl_7:
-	ld	hl, (_pl_ReadPacket.packet_size)
-	ld	iy, (_dev_funcs+3)
+.lbl_5:
+	ld	bc, (_pl_ReadPacket.packet_size)
+	push	bc
+	pop	hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, .lbl_10
-	ld	hl, (ix + 6)
-	push	hl
-	ld	hl, 3
-	push	hl
-	call	_indcall
+	jq	nz, .lbl_6
+	ld	hl, (_dev_funcs+3)
+	ld	de, (ix + 6)
+	push	de
+	ld	de, 3
+	push	de
+	call	_indcallhl
 	pop	hl
 	pop	hl
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	nz, .lbl_11
+	jq	nz, .lbl_12
 	ld	hl, (ix + 6)
 	ld	hl, (hl)
 	ld	(_pl_ReadPacket.packet_size), hl
-	jq	.lbl_11
-.lbl_10:
+	jq	.lbl_12
+.lbl_6:
+	ld	de, (_buffer_half_len)
+	push	bc
+	pop	hl
+	or	a, a
+	sbc	hl, de
+	jq	c, .lbl_8
+	push	de
+	pop	bc
+.lbl_8:
+	ld	hl, (_dev_funcs+3)
 	ld	de, (ix + 6)
 	push	de
-	push	hl
-	call	_indcall
+	ld	(ix + -7), bc
+	push	bc
+	call	_indcallhl
 	pop	hl
 	pop	hl
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	z, .lbl_15
-.lbl_11:
+	jq	nz, .lbl_12
+	ld	hl, (_pl_ReadPacket.packet_size)
+	ld	de, (ix + -7)
+	or	a, a
+	sbc	hl, de
+	ld	(_pl_ReadPacket.packet_size), hl
+	add	hl, bc
+	or	a, a
+	sbc	hl, bc
+	jq	z, .lbl_18
+.lbl_12:
 	call	usb_GetCycleCounter
 	ld	bc, (ix + -3)
 	ld	a, (ix + -4)
@@ -615,19 +634,20 @@ pl_ReadPacket:
 	ld	a, (_blocking_read_timeout+3)
 	call	ti._lcmpu
 	ld	a, 1
-	jq	c, .lbl_13
+	jq	c, .lbl_14
 	ld	a, 0
-.lbl_13:
+.lbl_14:
 	bit	0, a
-	jq	nz, .lbl_5
-	xor	a, a
-	jq	.lbl_16
+	jq	nz, .lbl_3
+	ld	e, 0
+	jq	.lbl_15
+.lbl_18:
+	ld	e, 1
 .lbl_15:
-	or	a, a
-	sbc	hl, hl
-	ld	(_pl_ReadPacket.packet_size), hl
-	ld	a, 1
-	jq	.lbl_16
+	ld	a, e
+	ld	sp, ix
+	pop	ix
+	ret
 
 	
 pl_SetAsyncTimeout:

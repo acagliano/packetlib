@@ -127,7 +127,7 @@ The handler parameter specifies if the call to the async process handler should 
 This library will call the handler function on its own at some points, namely during \mbox{\hyperlink{netpktce_8h_a4938b78991b6ce642e2e289db0183bc4}{pl\+\_\+\+Send\+Packet()}} and \mbox{\hyperlink{netpktce_8h_a2c78695f43c39502f3e01928acd0571b}{pl\+\_\+\+Read\+Packet()}}. If you have no need for consistent device processing, you can probably rely on the library\textquotesingle{}s calling of it; however if you are coding a more dynamic networking application that exchanges large quantities of data, it may be helpful to tick it yourself, even if it may not be needed, simply to ensure that you are emptying out your send and receive buffers as quickly as possible. 
 \end{DoxyNote}
 \begin{DoxyReturn}{Returns}
-Pointer to the internal asyncronous subsystem event handler that can be run in blocking or non-\/blocking mode. For USB/\+Serial, a pointer a function that loops usb\+\_\+\+Handle\+Events() (either once or for a timeout). 
+Pointer to the internal asyncronous subsystem event handler that can be run in blocking or non-\/blocking mode. For USB/\+Serial, a pointer to a function that loops usb\+\_\+\+Handle\+Events() (either once or for a timeout). 
 \end{DoxyReturn}
 \mbox{\Hypertarget{netpktce_8h_a17665c1c86d5ee8e5c1b9aa60319e6c8}\label{netpktce_8h_a17665c1c86d5ee8e5c1b9aa60319e6c8}} 
 \index{netpktce.h@{netpktce.h}!pl\_InitSendQueue@{pl\_InitSendQueue}}
@@ -203,7 +203,7 @@ Attempts to send data via the whatever device is passed in \mbox{\hyperlink{netp
 The length of the packet sent. Will loop sending multiple packet frames until the passed buffer or queue is fully sent or an error occurs. 
 \end{DoxyReturn}
 \begin{DoxyNote}{Note}
-If at any point a frame reports that the number of bytes sent does not match what is expected, an error, namely buffer limit, is assumed to have occured. The packet send loop immediately breaks, returning the size that was successfully sent. It is up to the user if it is important to them to check for this error condition or if it can simply be ignored. 
+If at any point a frame reports that the number of bytes sent does not match what is expected, an error, namely buffer limit, is assumed to have occured. The packet send loop immediately breaks, returning the size that was successfully sent. It is up to the user if it is important to them to check for and possibly handle this error condition or if it can simply be ignored. 
 \end{DoxyNote}
 \mbox{\Hypertarget{netpktce_8h_a2c78695f43c39502f3e01928acd0571b}\label{netpktce_8h_a2c78695f43c39502f3e01928acd0571b}} 
 \index{netpktce.h@{netpktce.h}!pl\_ReadPacket@{pl\_ReadPacket}}
@@ -217,7 +217,7 @@ Reads a number of bytes from the subsystem.
 
 
 \begin{DoxyParams}{Parameters}
-{\em dest} & Pointer to a buffer to read bytes to. Must be large enough to hold the largest packet your use case uses.. \\
+{\em dest} & Pointer to a buffer to read bytes to. Must be large enough to hold the largest packet your application uses. \\
 \hline
 \end{DoxyParams}
 \begin{DoxyNote}{Note}
@@ -227,7 +227,9 @@ This function defaults to a non-\/blocking read, meaning it checks if there is a
 True if a packet is available. False if not. 
 \end{DoxyReturn}
 \begin{DoxyNote}{Note}
-Because the header contains a size word, there is no need to pass a read size. The protocol will alternate between attempting to read a {\bfseries{size\+\_\+t}} (3 bytes) and attempting to read the length the last size\+\_\+t indicated. 
+Because the packet header contains a size word, there is no need to pass a read size. The protocol will alternate between attempting to read a {\bfseries{size\+\_\+t}} (3 bytes) and attempting to read the length the last size\+\_\+t indicated. 
+
+Like the send function, the read function can also support packet overflow, but it handles it differently. In this case, once the expected size is known, the library will attempt to read the {\bfseries{least}} of either\+: the expected size or the receive buffer length. After performing the read, it will reduce the expected size by the last read. If the expected size is now 0, the packet is complete, and it awaits a new size. However, if the expected size is still non-\/zero, it continues to await more packet data until the expected size is reached. 
 \end{DoxyNote}
 \mbox{\Hypertarget{netpktce_8h_ad8675f6b874c0de4ef902363e22441dd}\label{netpktce_8h_ad8675f6b874c0de4ef902363e22441dd}} 
 \index{netpktce.h@{netpktce.h}!pl\_SetAsyncTimeout@{pl\_SetAsyncTimeout}}
