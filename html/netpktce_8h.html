@@ -103,9 +103,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a4938b78991b6ce642e2e289db0183bc4"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4">pl_SendPacket</a> (uint8_t *data, size_t len)</td></tr>
 <tr class="memdesc:a4938b78991b6ce642e2e289db0183bc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a packet or sends the the contents of the send queue.  <a href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4">More...</a><br /></td></tr>
 <tr class="separator:a4938b78991b6ce642e2e289db0183bc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c78695f43c39502f3e01928acd0571b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b">pl_ReadPacket</a> (uint8_t *dest)</td></tr>
-<tr class="memdesc:a2c78695f43c39502f3e01928acd0571b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a number of bytes from the subsystem.  <a href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b">More...</a><br /></td></tr>
-<tr class="separator:a2c78695f43c39502f3e01928acd0571b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8077095d3b4107935db4f77015a0aa7"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#aa8077095d3b4107935db4f77015a0aa7">pl_ReadPacket</a> (uint8_t *dest)</td></tr>
+<tr class="memdesc:aa8077095d3b4107935db4f77015a0aa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a number of bytes from the subsystem.  <a href="netpktce_8h.html#aa8077095d3b4107935db4f77015a0aa7">More...</a><br /></td></tr>
+<tr class="separator:aa8077095d3b4107935db4f77015a0aa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8675f6b874c0de4ef902363e22441dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="netpktce_8h.html#ad8675f6b874c0de4ef902363e22441dd">pl_SetAsyncTimeout</a> (size_t timeout)</td></tr>
 <tr class="memdesc:ad8675f6b874c0de4ef902363e22441dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the timeout for the Async device process handler.  <a href="netpktce_8h.html#ad8675f6b874c0de4ef902363e22441dd">More...</a><br /></td></tr>
 <tr class="separator:ad8675f6b874c0de4ef902363e22441dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -219,7 +219,7 @@ Functions</h2></td></tr>
 <div class="ttc" id="anetpktce_8h_html_ae58df8f84f50f72a2c62bd452d58a3ab"><div class="ttname"><a href="netpktce_8h.html#ae58df8f84f50f72a2c62bd452d58a3ab">pl_GetAsyncProcHandler</a></div><div class="ttdeci">void * pl_GetAsyncProcHandler(void)</div><div class="ttdoc">Returns a pointer to the internal device events handler.</div></div>
 </div><!-- fragment --> <dl class="section note"><dt>Note</dt><dd>The handler parameter specifies if the call to the async process handler should be blocking or non-blocking. Non-blocking runs once and then returns. Blocking runs for the set timeout (default of 50ms). </dd>
 <dd>
-This library will call the handler function on its own at some points, namely during <a class="el" href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4" title="Sends a packet or sends the the contents of the send queue.">pl_SendPacket()</a> and <a class="el" href="netpktce_8h.html#a2c78695f43c39502f3e01928acd0571b" title="Reads a number of bytes from the subsystem.">pl_ReadPacket()</a>. If you have no need for consistent device processing, you can probably rely on the library's calling of it; however if you are coding a more dynamic networking application that exchanges large quantities of data, it may be helpful to tick it yourself, even if it may not be needed, simply to ensure that you are emptying out your send and receive buffers as quickly as possible. </dd></dl>
+This library will call the handler function on its own at some points, namely during <a class="el" href="netpktce_8h.html#a4938b78991b6ce642e2e289db0183bc4" title="Sends a packet or sends the the contents of the send queue.">pl_SendPacket()</a> and <a class="el" href="netpktce_8h.html#aa8077095d3b4107935db4f77015a0aa7" title="Reads a number of bytes from the subsystem.">pl_ReadPacket()</a>. If you have no need for consistent device processing, you can probably rely on the library's calling of it; however if you are coding a more dynamic networking application that exchanges large quantities of data, it may be helpful to tick it yourself, even if it may not be needed, simply to ensure that you are emptying out your send and receive buffers as quickly as possible. </dd></dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the internal asyncronous subsystem event handler that can be run in blocking or non-blocking mode. For USB/Serial, a pointer to a function that loops usb_HandleEvents() (either once or for a timeout). </dd></dl>
 
 </div>
@@ -344,14 +344,14 @@ This library will call the handler function on its own at some points, namely du
 
 </div>
 </div>
-<a id="a2c78695f43c39502f3e01928acd0571b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c78695f43c39502f3e01928acd0571b">&#9670;&nbsp;</a></span>pl_ReadPacket()</h2>
+<a id="aa8077095d3b4107935db4f77015a0aa7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8077095d3b4107935db4f77015a0aa7">&#9670;&nbsp;</a></span>pl_ReadPacket()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool pl_ReadPacket </td>
+          <td class="memname">size_t pl_ReadPacket </td>
           <td>(</td>
           <td class="paramtype">uint8_t *&#160;</td>
           <td class="paramname"><em>dest</em></td><td>)</td>
@@ -368,7 +368,7 @@ This library will call the handler function on its own at some points, namely du
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd>This function defaults to a non-blocking read, meaning it checks if there is a full packet available in the receive buffer and then immediately returns to the caller. You may set this to a blocking read by using the <a class="el" href="netpktce_8h.html#a3eee61cca8169f57e0f216e562012aa6" title="Sets the timeout for reading a packet.">pl_SetReadTimeout()</a> function. </dd></dl>
-<dl class="section return"><dt>Returns</dt><dd>True if a packet is available. False if not. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Size read if packet available. 0 otherwise. </dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Because the packet header contains a size word, there is no need to pass a read size. The protocol will alternate between attempting to read a <b>size_t</b> (3 bytes) and attempting to read the length the last size_t indicated. </dd>
 <dd>
 Like the send function, the read function can also support packet overflow, but it handles it differently. In this case, once the expected size is known, the library will attempt to read the <b>least</b> of either: the expected size or the receive buffer length. After performing the read, it will reduce the expected size by the last read. If the expected size is now 0, the packet is complete, and it awaits a new size. However, if the expected size is still non-zero, it continues to await more packet data until the expected size is reached. </dd></dl>

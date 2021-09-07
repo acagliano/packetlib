@@ -126,7 +126,7 @@ size_t pl_SendPacket(uint8_t *data, size_t len);
  * @note This function defaults to a non-blocking read, meaning it checks if there is a full packet
  * 		available in the receive buffer and then immediately returns to the caller.
  * 		You may set this to a blocking read by using the pl_SetReadTimeout() function.
- * @returns True if a packet is available. False if not.
+ * @returns Size read if packet available. 0 otherwise.
  * @note Because the packet header contains a size word, there is no need to pass a read size.
  * 		The protocol will alternate between attempting to read a @b size_t (3 bytes) and attempting
  * 		to read the length the last size_t indicated.
@@ -136,7 +136,7 @@ size_t pl_SendPacket(uint8_t *data, size_t len);
  * 		the last read. If the expected size is now 0, the packet is complete, and it awaits a new size. However, if
  * 		the expected size is still non-zero, it continues to await more packet data until the expected size is reached.
  ***************************************************************************************************************************************/
-bool pl_ReadPacket(uint8_t *dest);
+size_t pl_ReadPacket(uint8_t *dest);
 
 /*****************************************************************************************************
  * @brief Sets the timeout for the Async device process handler.
