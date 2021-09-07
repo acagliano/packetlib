@@ -542,42 +542,43 @@ pl_SendPacket:
 	ret
 
 pl_ReadPacket:
-	ld	hl, -7
+	ld	hl, -10
 	call	ti._frameset
 	ld	hl, (ix + 6)
-	ld	e, 0
+	ld	de, 0
 	ld	a, (_device_type)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, .lbl_1
-	jq	.lbl_15
-.lbl_1:
+	jq	z, .lbl_1
 	or	a, a
-	jq	nz, .lbl_2
-	jq	.lbl_15
-.lbl_2:
+	jq	nz, .lbl_4
+.lbl_1:
+	ex	de, hl
+	jq	.lbl_17
+.lbl_4:
 	call	usb_GetCycleCounter
+	ld	(ix + -9), hl
+	ld	(ix + -10), e
+	or	a, a
+	sbc	hl, hl
 	ld	(ix + -3), hl
-	ld	(ix + -4), e
-.lbl_3:
+.lbl_5:
 	ld	hl, (_dev_funcs)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_5
+	jq	z, .lbl_7
 	ld	de, 0
 	push	de
 	call	_indcallhl
 	pop	hl
-.lbl_5:
-	ld	bc, (_pl_ReadPacket.packet_size)
-	push	bc
-	pop	hl
+.lbl_7:
+	ld	hl, (_pl_ReadPacket.packet_size)
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	nz, .lbl_6
+	jq	nz, .lbl_10
 	ld	hl, (_dev_funcs+3)
 	ld	de, (ix + 6)
 	push	de
@@ -589,62 +590,57 @@ pl_ReadPacket:
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	nz, .lbl_12
+	ld	hl, (ix + -3)
+	jq	nz, .lbl_15
 	ld	hl, (ix + 6)
 	ld	hl, (hl)
 	ld	(_pl_ReadPacket.packet_size), hl
-	jq	.lbl_12
-.lbl_6:
+	jq	.lbl_15
+.lbl_10:
 	ld	de, (_buffer_half_len)
-	push	bc
-	pop	hl
+	ld	(ix + -6), hl
 	or	a, a
 	sbc	hl, de
-	jq	c, .lbl_8
-	push	de
-	pop	bc
-.lbl_8:
+	ld	bc, (ix + 6)
+	jq	c, .lbl_12
+	ld	(ix + -6), de
+.lbl_12:
 	ld	hl, (_dev_funcs+3)
-	ld	de, (ix + 6)
-	push	de
-	ld	(ix + -7), bc
 	push	bc
+	ld	de, (ix + -6)
+	push	de
 	call	_indcallhl
 	pop	hl
 	pop	hl
 	ld	l, 1
 	xor	a, l
 	bit	0, a
-	jq	nz, .lbl_12
+	jq	nz, .lbl_14
 	ld	hl, (_pl_ReadPacket.packet_size)
-	ld	de, (ix + -7)
+	ld	de, (ix + -6)
 	or	a, a
 	sbc	hl, de
 	ld	(_pl_ReadPacket.packet_size), hl
 	add	hl, bc
 	or	a, a
 	sbc	hl, bc
-	jq	z, .lbl_18
-.lbl_12:
+	ld	hl, (ix + -3)
+	jq	z, .lbl_17
+	jq	.lbl_15
+.lbl_14:
+	ld	hl, (ix + -3)
+.lbl_15:
+	ld	(ix + -3), hl
 	call	usb_GetCycleCounter
-	ld	bc, (ix + -3)
-	ld	a, (ix + -4)
+	ld	bc, (ix + -9)
+	ld	a, (ix + -10)
 	call	ti._lsub
 	ld	bc, (_blocking_read_timeout)
 	ld	a, (_blocking_read_timeout+3)
 	call	ti._lcmpu
-	ld	a, 1
-	jq	c, .lbl_14
-	ld	a, 0
-.lbl_14:
-	bit	0, a
-	jq	nz, .lbl_3
-	ld	e, 0
-	jq	.lbl_15
-.lbl_18:
-	ld	e, 1
-.lbl_15:
-	ld	a, e
+	ld	hl, 0
+	jq	c, .lbl_5
+.lbl_17:
 	ld	sp, ix
 	pop	ix
 	ret
